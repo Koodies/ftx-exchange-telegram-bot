@@ -1,0 +1,11 @@
+{
+  "name": "ftx-auto-lending-tele",
+  "version": "1.0.0",
+  "description": "A program to init lending at every hour via telegram bot commands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Koodies Tan Ke Wei",
+  "license": "MIT"
+}
