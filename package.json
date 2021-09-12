@@ -9,7 +9,12 @@
   "author": "Koodies Tan Ke Wei",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.4",
     "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
     "telegraf": "^4.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }
