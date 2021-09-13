@@ -3,25 +3,36 @@ require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage }, Markup } = require('telegraf')
 const lending = require('./src/ftx/lendingRates')
 const wallet = require('./src/ftx/wallet')
-const database = require('./src/lib/database')
-const fileName = "./database.json"
-const file = require(fileName)
+const ftxDB = require('./src/ftx/database')
+const filePath = "./database.json"
+const file = require(filePath)
+const fs = require('fs')
 
 //watch list scene
 const watchListScene = new BaseScene('watchListScene')
 const watchHelp = `List of available commands: 
 /list - List of coins available on FTX
+/update - Update local database
 /current - Display watch list
 /add <coin> - Top 10 estimated rates for the next hour
 /remove <coin> - Your watchlist estimated rates for the next hour
-/return - Return to main menu`
+/back - Return to main menu`
 watchListScene.enter(ctx => ctx.reply(`welcome to watch tower\n ${watchHelp}`))
 watchListScene.help((ctx) => ctx.reply(watchHelp))
 watchListScene.command('list', ctx => {
-
+    let message = `Last updated: ${file['lastUpdated']} \n`;
+    let arrayOfSupportedCoins = file['db']
+    arrayOfSupportedCoins.forEach(coin => {
+        message += `[${coin.id}] - ${coin.name} \n`
+    })
+    ctx.reply(message)
 })
-watchListScene.command('update', ctx => {
-    ctx.reply('Updated')
+watchListScene.command('update', async ctx => {
+    let coinsJSON = await ftxDB.getLendingCoinDatabase()
+    file['db'] = coinsJSON
+    file['lastUpdated'] = Date.now()
+    save(file)
+    ctx.reply('Updated database')
 })
 watchListScene.command('current', ctx => {
     let list = ``
@@ -34,7 +45,7 @@ watchListScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
     file.watchlist.push(coin)
-    database.save(file)
+    save(file)
     ctx.reply(`Added ${coin}`)
 })
 watchListScene.command('remove', ctx => {
@@ -46,10 +57,10 @@ watchListScene.command('remove', ctx => {
         return
     }
     file.watchlist.splice(index, 1)
-    database.save(file)
+    save(file)
     ctx.reply(`Removed ${coin}`)
 })
-watchListScene.command('return', ctx => { return ctx.scene.leave() })
+watchListScene.command('back', ctx => { return ctx.scene.leave() })
 watchListScene.leave(ctx => ctx.reply('Out from watchlist changes'))
 
 //lending scene
@@ -58,11 +69,14 @@ const lendingHelp = `List of available commands:
 /top10 - Top 10 estimated rates for the next hour
 /top10crypto - Top 10 crypto estimated rates for the next hour
 /watchlist - Your watchlist estimated rates for the next hour
-/return - Return to main menu\n`
+/back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
 lendingScene.command('top10', ctx => {
     getTop10Rates(ctx)
+})
+lendingScene.command('top10crypto', ctx => {
+    getTop10CryptoRates(ctx)
 })
 lendingScene.command('watchlist', ctx => {
     getWatchListRates(ctx)
@@ -70,7 +84,7 @@ lendingScene.command('watchlist', ctx => {
 lendingScene.command('start', ctx => {
 
 })
-lendingScene.command('return', ctx => { return ctx.scene.leave() })
+lendingScene.command('back', ctx => { return ctx.scene.leave() })
 lendingScene.leave(ctx => ctx.reply('Out from lending scene'))
 
 //Initiate Telegram Bot
@@ -119,7 +133,17 @@ async function getWatchListRates(ctx) {
 
 async function getTop10Rates(ctx) {
     try {
-        const results = await lending.getRatesByCount(10)
+        const results = await lending.getAllRates(10)
+        const message = generateRatesMsg(results)
+        ctx.reply(message)
+    } catch (error) {
+        console.log(`Error: ${error}`)
+    }
+}
+
+async function getTop10CryptoRates(ctx) {
+    try {
+        const results = await lending.getCryptoRates(10)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -135,6 +159,13 @@ function generateRatesMsg(results = []) {
         message += `[${result.coin}] Estimate: ${estimate} \n`
     })
     return message
+}
+
+function save(newFile) {
+    fs.writeFile(filePath, JSON.stringify(newFile), (err) => {
+        if (err) return console.log(err)
+        console.log(`Successfully saved database.json`)
+    })
 }
 
 // Enable graceful stop
