@@ -118,4 +118,4 @@ dist
 .pnp.*
 
 # Others
-./database.json
+database.json
