@@ -23,20 +23,19 @@ class LendingRates {
         let arrayOfRates = await getRates()
         let arrayOfCryptoRates = []
         arrayOfRates.forEach(rate => {
-            let doc = _.find(file.db, o =>{ return o.id === rate.coin })
-            if(!doc || doc['tokenizedEquity']) return
+            let doc = _.find(file.db, o => { return o.id === rate.coin })
+            if (!doc || doc['tokenizedEquity']) return
             arrayOfCryptoRates.push(rate)
         })
         return getTopRates(arrayOfCryptoRates, count)
 
     }
-    
+
     /**
      * Get an array of rates of coins under watchlist
      * @param  {} coins=[]
      */
     static async getRatesByWatchlist(coins = []) {
-        console.log(coins)
         const arrayOfRates = await getRates()
         let result = []
         coins.forEach(coin => {
@@ -62,9 +61,9 @@ function getRates() {
  * @param  {Array} arrayOfRates     Result from getRates()
  * @param  {Integer} count
  */
-function getTopRates(arrayOfRates, count = 0){
-    let arrayOfOrderedRates = _.orderBy(arrayOfRates, ['estimate'],['desc'])
-    return (count === 0) ? arrayOfOrderedRates : arrayOfOrderedRates.slice(0, count-1)
+function getTopRates(arrayOfRates, count = 0) {
+    let arrayOfOrderedRates = _.orderBy(arrayOfRates, ['estimate'], ['desc'])
+    return (count === 0) ? arrayOfOrderedRates : arrayOfOrderedRates.slice(0, count - 1)
 }
 
 module.exports = LendingRates

@@ -34,7 +34,7 @@ class Authentication {
             }
         ).catch(
             error => {
-                console.log(error)
+                return { error: true, data: error }
             }
         )
     }
@@ -48,7 +48,6 @@ class Authentication {
             }
         ).catch(
             error => {
-                console.log(error)
                 return { error: true, data: error }
             }
         )
