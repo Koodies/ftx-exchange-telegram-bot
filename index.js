@@ -1,12 +1,13 @@
 'use strict'
 require('dotenv').config()
-const { Telegraf, session, Scenes: { BaseScene, Stage }, Markup } = require('telegraf')
+const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
 const lending = require('./src/ftx/lendingRates')
 const wallet = require('./src/ftx/wallet')
 const ftxDB = require('./src/ftx/database')
 const filePath = "./database.json"
 const file = require(filePath)
 const fs = require('fs')
+const _ = require('lodash')
 
 //watch list scene
 const watchListScene = new BaseScene('watchListScene')
@@ -98,6 +99,7 @@ bot.hears('start', ctx => startLending(ctx))
 bot.command('balance', ctx => getBalance(ctx))
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
+bot.command('whois', ctx => whois(ctx))
 bot.hears('stop', ctx => stopLending(ctx))
 bot.launch()
 
@@ -109,13 +111,20 @@ function stopLending(ctx) {
     ctx.reply('Stopping lending')
 }
 
+function whois(ctx) {
+    const value = ctx.message.text.split(" ")
+    const coin = value[1].toUpperCase()
+    const doc = _.find(file.db, o =>{ return o.id === coin })
+    ctx.reply(`${doc.name}`)
+}
+
 async function getBalance(ctx) {
     let balance = await wallet.getBalances()
     ctx.reply(`Balance: \n${balance}`)
 }
 
 function getHelp(ctx) {
-    const help = `List of commands: 
+    const help = `List of commands:
     /watchlist
     /lending`
     ctx.reply(help)
