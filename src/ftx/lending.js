@@ -10,6 +10,7 @@ class LendingCron {
     }
 
     static stop() {
+        stopLend()
         lending.stop()
         console.log('Lending Job Stopped')
     }
@@ -20,13 +21,31 @@ async function lendOut() {
     let listOfCoins = await getLendingInfo()
     const doc = _.find(listOfCoins, coin => { return coin.coin === "USD"})
     let result = await sendLendingOffer(doc.coin, doc.lendable, doc.minRate)
+    console.log(result)
+    if(result.error) console.log(`Error on lending: ${result.data}`)
+}
+
+async function stopLend() {
+    let listOfCoins = await getLendingInfo()
+    const doc = _.find(listOfCoins, coin => { return coin.coin === "USD"})
+    let result = await stopLendingOffer(doc.coin, doc.minRate)
+    console.log(result)
     if(result.error) console.log(`Error on lending: ${result.data}`)
 }
 
 function sendLendingOffer(coin, size, rate) {
     let timeStamp = +new Date
     let path = `spot_margin/offers`
-    let data = { coin, size, rate }
+    let data = { coin, size:1, rate: 1 }
+    console.log(data)
+    let signature = ftx.generateSignature('POST', timeStamp, path, data)
+    return ftx.sendPostReq(signature, timeStamp, path, data)
+}
+
+function stopLendingOffer(coin, rate) {
+    let timeStamp = +new Date
+    let path = `spot_margin/offers`
+    let data = { coin, size: 0, rate: 1 }
     console.log(data)
     let signature = ftx.generateSignature('POST', timeStamp, path, data)
     return ftx.sendPostReq(signature, timeStamp, path, data)

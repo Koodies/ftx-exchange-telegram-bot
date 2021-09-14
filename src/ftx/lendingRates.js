@@ -36,6 +36,7 @@ class LendingRates {
      * @param  {} coins=[]
      */
     static async getRatesByWatchlist(coins = []) {
+        console.log(coins)
         const arrayOfRates = await getRates()
         let result = []
         coins.forEach(coin => {
