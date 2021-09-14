@@ -1,7 +1,8 @@
 'use strict'
 require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
-const lending = require('./src/ftx/lendingRates')
+const lendingRates = require('./src/ftx/lendingRates')
+const lending = require('./src/ftx/lending')
 const wallet = require('./src/ftx/wallet')
 const ftxDB = require('./src/ftx/database')
 const filePath = "./database.json"
@@ -37,7 +38,7 @@ watchListScene.command('update', async ctx => {
 })
 watchListScene.command('current', ctx => {
     let list = ``
-    file.watchlist.forEach(coin =>{
+    file.watchlist.forEach(coin => {
         list += `${coin}\n`
     })
     ctx.reply(list)
@@ -93,28 +94,29 @@ const stage = new Stage([watchListScene, lendingScene])
 const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.use(session())
 bot.use(stage.middleware())
-bot.start((ctx) => startLending(ctx))
 bot.help((ctx) => getHelp(ctx))
-bot.hears('start', ctx => startLending(ctx))
+bot.command('start', ctx => startLending(ctx))
 bot.command('balance', ctx => getBalance(ctx))
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
 bot.command('whois', ctx => whois(ctx))
-bot.hears('stop', ctx => stopLending(ctx))
+bot.command('stop', ctx => stopLending(ctx))
 bot.launch()
 
-function startLending(ctx) {
-    ctx.reply('Starting to lend')
+async function startLending(ctx) {
+    lending.start()
+    ctx.reply('Start lending')
 }
 
 function stopLending(ctx) {
+    lending.stop()
     ctx.reply('Stopping lending')
 }
 
 function whois(ctx) {
     const value = ctx.message.text.split(" ")
     const coin = value[1].toUpperCase()
-    const doc = _.find(file.db, o =>{ return o.id === coin })
+    const doc = _.find(file.db, o => { return o.id === coin })
     ctx.reply(`${doc.name}`)
 }
 
@@ -132,7 +134,7 @@ function getHelp(ctx) {
 
 async function getWatchListRates(ctx) {
     try {
-        const results = await lending.getRatesByWatchlist(file.watchlist)
+        const results = await lendingRates.getRatesByWatchlist(file.watchlist)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -142,7 +144,7 @@ async function getWatchListRates(ctx) {
 
 async function getTop10Rates(ctx) {
     try {
-        const results = await lending.getAllRates(10)
+        const results = await lendingRates.getAllRates(10)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -152,7 +154,7 @@ async function getTop10Rates(ctx) {
 
 async function getTop10CryptoRates(ctx) {
     try {
-        const results = await lending.getCryptoRates(10)
+        const results = await lendingRates.getCryptoRates(10)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -166,6 +168,16 @@ function generateRatesMsg(results = []) {
         if (!result) return;
         let estimate = parseFloat(result.estimate * 24 * 365 * 100).toFixed(2) + "%"
         message += `[${result.coin}] Estimate: ${estimate} \n`
+    })
+    return message
+}
+
+function generateMsg(results = []) {
+    let message = ``
+    results.forEach(result => {
+        if (!result) return;
+        console.log(result)
+        message += `${result} \n`
     })
     return message
 }
