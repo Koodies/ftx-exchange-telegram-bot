@@ -24,7 +24,7 @@ class Authentication {
         }
         return crypto.createHmac('sha256', process.env.FTX_SECRET).update(timeStamp + method + path + payload).digest('hex')
     }
-    
+
     static sendReq(signature, timeStamp, path) {
         axios.defaults.headers.common['FTX-SIGN'] = signature
         axios.defaults.headers.common['FTX-TS'] = timeStamp
@@ -34,7 +34,21 @@ class Authentication {
             }
         ).catch(
             error => {
-                //console.log(error)
+                return { error: true, data: error }
+            }
+        )
+    }
+
+    static sendPostReq(signature, timeStamp, path, data) {
+        axios.defaults.headers.common['FTX-SIGN'] = signature
+        axios.defaults.headers.common['FTX-TS'] = timeStamp
+        return axios.post(`https://ftx.com/api/${path}`, data).then(
+            res => {
+                return { error: !res.data.success, data: res.data.result }
+            }
+        ).catch(
+            error => {
+                return { error: true, data: error }
             }
         )
     }
