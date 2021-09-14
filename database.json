@@ -1,1 +1,480 @@
-{"watchlist":["SOL","USD"]}
+{
+    "db": [
+        {
+            "id": "1INCH",
+            "name": "1NCH Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "AAPL",
+            "name": "Apple",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "AAVE",
+            "name": "Aave",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "ABNB",
+            "name": "Airbnb",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "ACB",
+            "name": "Aurora Cannabis Inc",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "ALPHA",
+            "name": "Alpha Finance",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "AMC",
+            "name": "AMC Entertainment Holdings",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "AMD",
+            "name": "Advanced Micro Devices",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "AMZN",
+            "name": "Amazon",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "APHA",
+            "name": "Aphria Inc",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "ARKK",
+            "name": "ARK Innovation ETF",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "ASD",
+            "name": "AscendEx Token (BTMX)",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "AUD",
+            "name": "Australian Dollar",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BABA",
+            "name": "Alibaba",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BAND",
+            "name": "Band Protocol",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BB",
+            "name": "BlackBerry",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BCH",
+            "name": "Bitcoin Cash",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BILI",
+            "name": "Bilibili Inc",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BITW",
+            "name": "Bitwise 10 Crypto Index Fund",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BNB",
+            "name": "Binance Coin",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BNTX",
+            "name": "BioNTech",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BNTX",
+            "name": "BioNTech",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "BRZ",
+            "name": "Brazilian Digital Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BTC",
+            "name": "Bitcoin",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "BYND",
+            "name": "Beyond Meat Inc",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "CAD",
+            "name": "Canadian Dollar",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "CEL",
+            "name": "Celsius Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "CGC",
+            "name": "Canopy Growth Corp",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "COIN",
+            "name": "Coinbase",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "CRON",
+            "name": "Chronos Group Inc",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "CUSDT",
+            "name": "Compound USDT",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "DAI",
+            "name": "Dai",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "DKNG",
+            "name": "DraftKings",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "DOGE",
+            "name": "Dogecoin",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "ETH",
+            "name": "Ethereum",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "ETHE",
+            "name": "Grayscale Ethereum Trust",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "EUR",
+            "name": "Euro",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "FB",
+            "name": "Facebook",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GBP",
+            "name": "Pound",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "GBTC",
+            "name": "Grayscale Bitcoin Trust",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GDX",
+            "name": "VanEck Vectors Gold Miners Etf",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GDXJ",
+            "name": "VanEck Vectors Junior Gold Miners Etf",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GLD",
+            "name": "SPDR Gold Shares",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GLXY",
+            "name": "Galaxy Digital Holdings",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GME",
+            "name": "GameStop",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GOOGL",
+            "name": "Alphabet",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "GRT",
+            "name": "Graph Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "HOOD_PRE",
+            "name": "Robinhood Pre-IPO Contract",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "HT",
+            "name": "Huobi Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "KNC",
+            "name": "Kyber Network",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "LEO",
+            "name": "LEO",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "LINK",
+            "name": "ChainLink Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "LTC",
+            "name": "Litecoin",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "MATIC",
+            "name": "Matic",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "MKR",
+            "name": "Maker",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "MOB",
+            "name": "MobileCoin",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "MRNA",
+            "name": "Moderna",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "MSTR",
+            "name": "MicroStrategy",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "NFLX",
+            "name": "Netflix",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "NIO",
+            "name": "Nio",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "NOK",
+            "name": "Nokia",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "NVDA_PRE",
+            "name": "NVIDIA Pre-split",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "OKB",
+            "name": "OKB",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "OMG",
+            "name": "OMG Network",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "PAXG",
+            "name": "PAX Gold",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "PENN",
+            "name": "Penn National Gaming",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "TRUMPFEBWIN",
+            "name": "TRUMPFEB Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "PYPL",
+            "name": "Paypal",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "REN",
+            "name": "REN",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "RSR",
+            "name": "Reserve Rights",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "RUNE",
+            "name": "Thorchain",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "SLV",
+            "name": "iShares Silver Trust",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "SNX",
+            "name": "Synthetix Network Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "SOL",
+            "name": "Solana",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "SPY",
+            "name": "SPDR S&P 500 ETF",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "SQ",
+            "name": "Square",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "SUSHI",
+            "name": "Sushi",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "SXP",
+            "name": "Swipe",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "TLRY",
+            "name": "Tilray",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "TOMO",
+            "name": "TomoChain",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "TRX",
+            "name": "TRON",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "TRYB",
+            "name": "BiLira",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "TSLA",
+            "name": "Tesla",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "TSM",
+            "name": "Taiwan Semiconductor Mfg",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "TWTR",
+            "name": "Twitter",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "UBER",
+            "name": "Uber",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "UNI",
+            "name": "Uniswap Protocol Token",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "USD",
+            "name": "USD",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "USDT",
+            "name": "USD Tether",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "USO",
+            "name": "United States Oil Fund",
+            "tokenizedEquity": true
+        },
+        {
+            "id": "WBTC",
+            "name": "Wrapped BTC",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "XAUT",
+            "name": "Tether Gold",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "XRP",
+            "name": "XRP",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "YFI",
+            "name": "Yearn.Finance",
+            "tokenizedEquity": false
+        },
+        {
+            "id": "ZM",
+            "name": "Zoom",
+            "tokenizedEquity": true
+        }
+    ],
+    "lastUpdated": 1631580862658
+}
