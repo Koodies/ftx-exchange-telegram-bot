@@ -11,7 +11,7 @@ class LendingRates {
      * @param  {Integer} count
      */
     static async getAllRates(count) {
-        let arrayOfRates = await getRates()
+        let arrayOfRates = await this.getRates()
         return getTopRates(arrayOfRates, count)
     }
 
@@ -20,7 +20,7 @@ class LendingRates {
      * @param  {Integer} count
      */
     static async getCryptoRates(count) {
-        let arrayOfRates = await getRates()
+        let arrayOfRates = await this.getRates()
         let arrayOfCryptoRates = []
         arrayOfRates.forEach(rate => {
             let doc = _.find(file.db, o => { return o.id === rate.coin })
@@ -36,7 +36,7 @@ class LendingRates {
      * @param  {} coins=[]
      */
     static async getRatesByWatchlist(coins = []) {
-        const arrayOfRates = await getRates()
+        const arrayOfRates = await this.getRates()
         let result = []
         coins.forEach(coin => {
             let index = arrayOfRates.findIndex(rates => rates['coin'].match(new RegExp((`^${coin.toUpperCase()}$`))))
@@ -44,17 +44,17 @@ class LendingRates {
         })
         return result
     }
+    
+    /**
+     * Get FTX current and estimate spot margin lending rates
+     */
+    static getRates() {
+        let timeStamp = +new Date
+        let path = `spot_margin/lending_rates`
+        let signature = ftx.generateSignature('GET', timeStamp, path)
+        return ftx.sendReq(signature, timeStamp, path)
+    }
 }//end of lendingRates
-
-/**
- * Get FTX current and estimate spot margin lending rates
- */
-function getRates() {
-    let timeStamp = +new Date
-    let path = `spot_margin/lending_rates`
-    let signature = ftx.generateSignature('GET', timeStamp, path)
-    return ftx.sendReq(signature, timeStamp, path)
-}
 
 /**
  * Order the array of lending rates by estimated rates in descending order 
