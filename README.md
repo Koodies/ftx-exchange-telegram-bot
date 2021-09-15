@@ -1,6 +1,5 @@
 # FTX-Telegram Bot ReadMe
-A readme on how to install gitlab over the net or offline using .deb. 
-This guide does not include steps to setup an email server or the gitlab-runner for the DevOps automation
+A readme on how to 
 
 # Table of contents
 - [FTX-Telegram Bot ReadMe](#ftx-telegram-bot-readme)
