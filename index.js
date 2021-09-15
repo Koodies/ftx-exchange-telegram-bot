@@ -46,9 +46,13 @@ watchListScene.command('current', ctx => {
 watchListScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    file.watchlist.push(coin)
-    save(file)
-    ctx.reply(`Added ${coin}`)
+    if(doesCoinExist(coin)) {
+        ctx.reply(`Added ${coin}`)
+    } else {
+        file.watchlist.push(coin)
+        save(file)
+        ctx.reply(`Added ${coin}`)
+    }
 })
 watchListScene.command('remove', ctx => {
     let value = ctx.message.text.split(" ")
@@ -84,6 +88,25 @@ lendingScene.command('top10crypto', ctx => {
 })
 lendingScene.command('watchlist', ctx => {
     getWatchListRates(ctx)
+})
+lendingScene.command('add', ctx => {
+    let value = ctx.message.text.split(" ")
+    let coin = value[1].toUpperCase()
+    file.lending.push(coin)
+    save(file)
+    ctx.reply(`Added ${coin} into lending list`)
+})
+lendingScene.command('remove', ctx => {
+    let value = ctx.message.text.split(" ")
+    let coin = value[1].toUpperCase()
+    const index = file.lending.indexOf(coin)
+    if (index === -1) {
+        ctx.reply(`${coin} is not in the lending list`)
+        return
+    }
+    file.watchlist.splice(index, 1)
+    save(file)
+    ctx.reply(`Removed ${coin} from lending list`)
 })
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
 lendingScene.leave(ctx => ctx.reply('Leaving lending scene'))
@@ -161,6 +184,14 @@ async function getTop10CryptoRates(ctx) {
         ctx.reply(message)
     } catch (error) {
         console.log(`Error: ${error}`)
+    }
+}
+
+async function doesCoinExist(coin) {
+    try {
+        
+    } catch (error) {
+        
     }
 }
 
