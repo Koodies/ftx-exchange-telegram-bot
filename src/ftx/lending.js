@@ -1,6 +1,11 @@
 const _ = require('lodash')
 const ftx = require('./authentication')
+const lendingRates = require('./lendingRates')
+const wallet = require('./wallet')
 var Cronjob = require('cron').CronJob;
+const filePath = "../../database.json"
+const file = require(filePath)
+const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
 var lending = new Cronjob('1 * * * * *', lendOut, null, false, 'America/Los_Angeles');
 
 class LendingCron {
@@ -11,7 +16,7 @@ class LendingCron {
     }
 
     static stop() {
-        stopLend()
+        stopAllLend()
         lending.stop()
         console.log('Lending Job Stopped')
     }
@@ -19,17 +24,28 @@ class LendingCron {
 }// end of LendingCron
 
 async function lendOut() {
-    let listOfCoins = await getLendingInfo()
-    const doc = _.find(listOfCoins, coin => { return coin.coin === "USD" })
-    let result = await sendLendingOffer(doc.coin, doc.lendable)
-    if (result.error) console.log(`Error on lending: ${result.data}`)
+    let listOfCoins = await lendingRates.getRates()
+    let listOfBalances = await wallet.getAllBalances()
+    const listOfLending = file.lending
+    listOfLending.forEach(async lend => {
+        const balance = _.find(listOfBalances[account], coin => { return coin.coin === lend })
+        const doc = _.find(listOfCoins, coin => { return coin.coin === lend })
+        if(balance.availableWithoutBorrow === 0 || !doc) {
+            console.log(`${coin.coin}: no funds`)
+            return
+        }
+        let result = await sendLendingOffer(lend, balance.availableWithoutBorrow)
+        if (result.error) console.log(`Error on lending: ${result.data}`)
+    })
 }
 
-async function stopLend() {
+async function stopAllLend() {
     let listOfCoins = await getLendingInfo()
-    const doc = _.find(listOfCoins, coin => { return coin.coin === "USD" })
-    let result = await stopLendingOffer(doc.coin)
-    if (result.error) console.log(`Error on lending: ${result.data}`)
+    listOfCoins.forEach(async coin => {
+        if(coin.offered === 0) return
+        let result = await stopLendingOffer(coin.coin)
+        if (result.error) console.log(`Error on lending: ${result.data}`)
+    })
 }
 
 function sendLendingOffer(coin, size) {
