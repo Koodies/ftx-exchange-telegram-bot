@@ -15,14 +15,14 @@ const watchListScene = new BaseScene('watchListScene')
 const watchHelp = `List of available commands: 
 /list - List of coins available on FTX
 /update - Update local database
-/current - Display watch list
-/add <coin> - Top 10 estimated rates for the next hour
-/remove <coin> - Your watchlist estimated rates for the next hour
-/back - Return to main menu`
-watchListScene.enter(ctx => ctx.reply(`welcome to watch tower\n ${watchHelp}`))
+/current - Display current watchlist
+/add <coin> - Add coin to your watchlist
+/remove <coin> - Remove coin from your watchlist
+/back - Return to main menu\n`
+watchListScene.enter(ctx => ctx.reply(`Welcome to watch tower\n ${watchHelp}`))
 watchListScene.help((ctx) => ctx.reply(watchHelp))
 watchListScene.command('list', ctx => {
-    let message = `Last updated: ${file['lastUpdated']} \n`;
+    let message = `Last updated: ${new Date(file['lastUpdated'])} \n`;
     let arrayOfSupportedCoins = file['db']
     arrayOfSupportedCoins.forEach(coin => {
         message += `[${coin.id}] - ${coin.name} \n`
@@ -63,7 +63,7 @@ watchListScene.command('remove', ctx => {
     ctx.reply(`Removed ${coin}`)
 })
 watchListScene.command('back', ctx => { return ctx.scene.leave() })
-watchListScene.leave(ctx => ctx.reply('Out from watchlist changes'))
+watchListScene.leave(ctx => ctx.reply('Leaving watch tower'))
 
 //lending scene
 const lendingScene = new BaseScene('lendingScene')
@@ -71,6 +71,8 @@ const lendingHelp = `List of available commands:
 /top10 - Top 10 estimated rates for the next hour
 /top10crypto - Top 10 crypto estimated rates for the next hour
 /watchlist - Your watchlist estimated rates for the next hour
+/add <coin> - Add coin to your lending list
+/remove <coin> - Remove coin from your lending list
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
@@ -83,11 +85,8 @@ lendingScene.command('top10crypto', ctx => {
 lendingScene.command('watchlist', ctx => {
     getWatchListRates(ctx)
 })
-lendingScene.command('start', ctx => {
-
-})
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
-lendingScene.leave(ctx => ctx.reply('Out from lending scene'))
+lendingScene.leave(ctx => ctx.reply('Leaving lending scene'))
 
 //Initiate Telegram Bot
 const stage = new Stage([watchListScene, lendingScene])
@@ -115,20 +114,23 @@ function stopLending(ctx) {
 
 function whois(ctx) {
     const value = ctx.message.text.split(" ")
-    const coin = value[1].toUpperCase()
-    const doc = _.find(file.db, o => { return o.id === coin })
-    ctx.reply(`${doc.name}`)
+    const coin = value[1]?.toUpperCase()
+    let result = `Missing coin ticker symbol`
+    if(coin){
+        const doc = _.find(file.db, o => { return o.id === coin })
+        result = (doc) ? doc.name : `${coin} does not exist in the database, please try to update in /watchlist`
+    }
+    ctx.reply(`${result}`)
 }
 
 async function getBalance(ctx) {
-    let balance = await wallet.getBalances()
-    ctx.reply(`Balance: \n${balance}`)
+    let arrayOfBalance = await wallet.getBalances()
+    let msg = generateBalanceSheet(arrayOfBalance)
+    ctx.reply(msg)
 }
 
 function getHelp(ctx) {
-    const help = `List of commands:
-    /watchlist
-    /lending`
+    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
     ctx.reply(help)
 }
 
@@ -165,21 +167,22 @@ async function getTop10CryptoRates(ctx) {
 function generateRatesMsg(results = []) {
     let message = ``
     results.forEach(result => {
-        if (!result) return;
+        if (!result) return
         let estimate = parseFloat(result.estimate * 24 * 365 * 100).toFixed(2) + "%"
         message += `[${result.coin}] Estimate: ${estimate} \n`
     })
     return message
 }
 
-function generateMsg(results = []) {
-    let message = ``
-    results.forEach(result => {
-        if (!result) return;
-        console.log(result)
-        message += `${result} \n`
+function generateBalanceSheet(arrayOfBalance) {
+    let message = `Balances: \n`
+    let counter = 0
+    arrayOfBalance.forEach(balance => {
+        if(balance.total === 0) return
+        counter++
+        message += `[${balance.coin}] Total: ${balance.total}, Value: USD$${balance.usdValue.toFixed(2)} \n`
     })
-    return message
+    return (counter === 0) ? `No balances` : message
 }
 
 function save(newFile) {

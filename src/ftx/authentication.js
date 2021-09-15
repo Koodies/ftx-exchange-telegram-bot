@@ -7,6 +7,7 @@ axios.defaults.headers.common['content-type'] = 'application/json'
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers.common['FTX-KEY'] = process.env.FTX_KEY
+if(process.env.FTX_SUB) axios.defaults.headers.common['FTX-SUBACCOUNT'] = process.env.FTX_SUB
 axios.defaults.keepAlive = true
 axios.defaults.timeout = 90 * 1000
 axios.defaults.keepAliveMsecs = 1000 * 60
