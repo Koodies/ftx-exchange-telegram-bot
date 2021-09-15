@@ -5,6 +5,7 @@ var lending = new Cronjob('1 * * * * *', lendOut, null, false, 'America/Los_Ange
 
 class LendingCron {
     static start() {
+        lendOut()
         lending.start()
         console.log('Lending Job Started')
     }
