@@ -5,7 +5,7 @@ const Cronjob = require('cron').CronJob;
 const filePath = "../../database.json"
 const file = require(filePath)
 const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
-var lending = new Cronjob('0 55 * * * *', lendOut, null, false, 'America/Los_Angeles');
+var lending = new Cronjob('0 50 * * * *', lendOut, null, false, 'America/Los_Angeles');
 
 class CronJob {
     static async start() {
