@@ -3,7 +3,7 @@ require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
 const rateCtrl = require('./src/controller/rate')
 const jobCtrl = require('./src/controller/cronJob')
-const wallet = require('./src/ftx/wallet')
+const balanceCtrl = require('./src/controller/balance')
 const localDB = require('./src/controller/localDB')
 const filePath = "./database.json"
 const file = require(filePath)
@@ -12,7 +12,7 @@ const _ = require('lodash')
 
 //watch list scene
 const watchListScene = new BaseScene('watchListScene')
-const watchHelp = `List of available commands: 
+const watchHelp = `List of available commands:
 /list - List of coins available on FTX
 /update - Update local database
 /current - Display current watchlist
@@ -46,13 +46,10 @@ watchListScene.command('current', ctx => {
 watchListScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    if(doesCoinExist(coin)) {
-        ctx.reply(`Added ${coin}`)
-    } else {
-        file.watchlist.push(coin)
-        save(file)
-        ctx.reply(`Added ${coin}`)
-    }
+    //TODO: doesCoinExist
+    file.watchlist.push(coin)
+    save(file)
+    ctx.reply(`Added ${coin}`)
 })
 watchListScene.command('remove', ctx => {
     let value = ctx.message.text.split(" ")
@@ -81,10 +78,12 @@ const lendingHelp = `List of available commands:
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
 lendingScene.command('top10', ctx => {
-    getTop10Rates(ctx)
+    const msg = await rateCtrl.getTop10Rates()
+    ctx.reply(msg)
 })
 lendingScene.command('top10crypto', ctx => {
-    getTop10CryptoRates(ctx)
+    const msg = await rateCtrl.getTop10CryptoRates()
+    ctx.reply(msg)
 })
 lendingScene.command('watchlist', ctx => {
     getWatchListRates(ctx)
@@ -118,7 +117,10 @@ bot.use(session())
 bot.use(stage.middleware())
 bot.help((ctx) => getHelp(ctx))
 bot.command('start', ctx => startLending(ctx))
-bot.command('balance', ctx => getBalance(ctx))
+bot.command('balance', ctx => {
+    let msg = balanceCtrl.getBalance()
+    ctx.reply(msg)
+})
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
 bot.command('whois', ctx => whois(ctx))
@@ -139,17 +141,11 @@ function whois(ctx) {
     const value = ctx.message.text.split(" ")
     const coin = value[1]?.toUpperCase()
     let result = `Missing coin ticker symbol`
-    if(coin){
+    if (coin) {
         const doc = _.find(file.db, o => { return o.id === coin })
         result = (doc) ? doc.name : `${coin} does not exist in the database, please try to update in /watchlist`
     }
     ctx.reply(`${result}`)
-}
-
-async function getBalance(ctx) {
-    let arrayOfBalance = await wallet.getBalances()
-    let msg = generateBalanceSheet(arrayOfBalance)
-    ctx.reply(msg)
 }
 
 function getHelp(ctx) {
@@ -165,55 +161,6 @@ async function getWatchListRates(ctx) {
     } catch (error) {
         console.log(`Error: ${error}`)
     }
-}
-
-async function getTop10Rates(ctx) {
-    try {
-        const results = await rateCtrl.getAllRates(10)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
-}
-
-async function getTop10CryptoRates(ctx) {
-    try {
-        const results = await rateCtrl.getCryptoRates(10)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
-}
-
-async function doesCoinExist(coin) {
-    try {
-        
-    } catch (error) {
-        
-    }
-}
-
-function generateRatesMsg(results = []) {
-    let message = ``
-    results.forEach(result => {
-        if (!result) return
-        let estimate = parseFloat(result.estimate * 24 * 365 * 100).toFixed(2) + "%"
-        message += `[${result.coin}] Estimate: ${estimate} \n`
-    })
-    return message
-}
-
-function generateBalanceSheet(arrayOfBalance) {
-    let message = `Balances: \n`
-    let counter = 0
-    arrayOfBalance.forEach(balance => {
-        if(balance.total === 0) return
-        counter++
-        message += `[${balance.coin}] Total: ${balance.total}, Value: USD$${balance.usdValue.toFixed(2)} \n`
-    })
-    return (counter === 0) ? `No balances` : message
 }
 
 function save(newFile) {
