@@ -1,10 +1,16 @@
 # FTX-Telegram Bot ReadMe
-A readme on how to 
+A readme on how to set up FTX-Telegram Bot
 
 # Table of contents
 - [FTX-Telegram Bot ReadMe](#ftx-telegram-bot-readme)
 - [Table of contents](#table-of-contents)
 - [Setup](#setup)
+  - [Setting up AWS](#setting-up-aws)
+  - [Run setup script](#run-setup-script)
+  - [[Temporary] Create these files on the main folder](#temporary-create-these-files-on-the-main-folder)
+  - [Create a telegram bot](#create-a-telegram-bot)
+  - [Create a FTX API](#create-a-ftx-api)
+  - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
     - [start - Global](#start---global)
@@ -30,10 +36,48 @@ A readme on how to
 - [Troubleshooting](#troubleshooting)
 - [Others](#others)
   - [Authors](#authors)
+  - [Tip me a Cup of Coffee](#tip-me-a-cup-of-coffee)
   - [References](#references)
 
 # Setup
 [(Back to top)](#table-of-contents)
+
+## Setting up AWS
+
+## Run setup script
+
+## [Temporary] Create these files on the main folder
+.env
+```
+BOT_TOKEN = 'telegram-bot-token-here'
+FTX_KEY = 'ftx-api-key-here'
+FTX_SECRET = 'ftx-api-secret-here'
+FTX_SUB = 'ftx-sub-account-here' #Optional
+```
+database.json
+```
+{
+    "watchlist": [],
+    "lending": [],
+    "db": []
+}
+```
+
+## Create a telegram bot
+1. Chat with [BotFather](https://core.telegram.org/bots#6-botfather)
+2. BotFather will give you a token, something like 123456789:AbCdfGhIJKlmNoQQRsTUVwxyZ.
+3. Paste the token under .env file
+
+## Create a FTX API
+1. Head over to https://ftx.com/profile
+2. Select the API tab
+3. Create API Key
+4. Copy both the key and paste it under .env file
+5. Make sure none of the permissions are enabled
+6. (Optional) - Create a sub account
+
+## Ready to spin
+
 
 # Menu
 [(Back to top)](#table-of-contents)
@@ -106,6 +150,9 @@ Issue a /back command to head back to the main menu
 [(Back to top)](#table-of-contents)
 ## Authors
 [Koodies](https://github.com/koodies)
+
+## Tip me a Cup of Coffee
+[FTX Referral](https://ftx.com/#a=koodies4ever)
 
 ## References
 [FTX API](https://docs.ftx.com/?python#rest-api)

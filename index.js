@@ -1,10 +1,10 @@
 'use strict'
 require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
-const lendingRates = require('./src/ftx/lendingRates')
-const lending = require('./src/ftx/lending')
-const wallet = require('./src/ftx/wallet')
-const ftxDB = require('./src/ftx/database')
+const rateCtrl = require('./src/controller/rate')
+const jobCtrl = require('./src/controller/cronJob')
+const balanceCtrl = require('./src/controller/balance')
+const localDB = require('./src/controller/localDB')
 const filePath = "./database.json"
 const file = require(filePath)
 const fs = require('fs')
@@ -12,7 +12,7 @@ const _ = require('lodash')
 
 //watch list scene
 const watchListScene = new BaseScene('watchListScene')
-const watchHelp = `List of available commands: 
+const watchHelp = `List of available commands:
 /list - List of coins available on FTX
 /update - Update local database
 /current - Display current watchlist
@@ -30,7 +30,7 @@ watchListScene.command('list', ctx => {
     ctx.reply(message)
 })
 watchListScene.command('update', async ctx => {
-    let coinsJSON = await ftxDB.getLendingCoinDatabase()
+    let coinsJSON = await localDB.getLendingCoinDatabase()
     file['db'] = coinsJSON
     file['lastUpdated'] = Date.now()
     save(file)
@@ -46,13 +46,10 @@ watchListScene.command('current', ctx => {
 watchListScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    if(doesCoinExist(coin)) {
-        ctx.reply(`Added ${coin}`)
-    } else {
-        file.watchlist.push(coin)
-        save(file)
-        ctx.reply(`Added ${coin}`)
-    }
+    //TODO: doesCoinExist
+    file.watchlist.push(coin)
+    save(file)
+    ctx.reply(`Added ${coin}`)
 })
 watchListScene.command('remove', ctx => {
     let value = ctx.message.text.split(" ")
@@ -80,14 +77,17 @@ const lendingHelp = `List of available commands:
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
-lendingScene.command('top10', ctx => {
-    getTop10Rates(ctx)
+lendingScene.command('top10',  async ctx => {
+    const msg = await rateCtrl.getTop10Rates()
+    ctx.reply(msg)
 })
-lendingScene.command('top10crypto', ctx => {
-    getTop10CryptoRates(ctx)
+lendingScene.command('top10crypto', async ctx => {
+    const msg = await rateCtrl.getTop10CryptoRates()
+    ctx.reply(msg)
 })
-lendingScene.command('watchlist', ctx => {
-    getWatchListRates(ctx)
+lendingScene.command('watchlist', async ctx => {
+    const message = await rateCtrl.getRatesByWatchlist(file.watchlist)
+    ctx.reply(message)
 })
 lendingScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
@@ -118,7 +118,10 @@ bot.use(session())
 bot.use(stage.middleware())
 bot.help((ctx) => getHelp(ctx))
 bot.command('start', ctx => startLending(ctx))
-bot.command('balance', ctx => getBalance(ctx))
+bot.command('balance', async ctx => {
+    let msg = await balanceCtrl.getBalance()
+    ctx.reply(msg)
+})
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
 bot.command('whois', ctx => whois(ctx))
@@ -126,94 +129,29 @@ bot.command('stop', ctx => stopLending(ctx))
 bot.launch()
 
 async function startLending(ctx) {
-    lending.start()
-    ctx.reply('Start lending')
+    let result = await jobCtrl.start()
+    ctx.reply(result)
 }
 
-function stopLending(ctx) {
-    lending.stop()
-    ctx.reply('Stopping lending')
+async function stopLending(ctx) {
+    let result = await jobCtrl.stop()
+    ctx.reply(result)
 }
 
 function whois(ctx) {
     const value = ctx.message.text.split(" ")
     const coin = value[1]?.toUpperCase()
     let result = `Missing coin ticker symbol`
-    if(coin){
+    if (coin) {
         const doc = _.find(file.db, o => { return o.id === coin })
         result = (doc) ? doc.name : `${coin} does not exist in the database, please try to update in /watchlist`
     }
     ctx.reply(`${result}`)
 }
 
-async function getBalance(ctx) {
-    let arrayOfBalance = await wallet.getBalances()
-    let msg = generateBalanceSheet(arrayOfBalance)
-    ctx.reply(msg)
-}
-
 function getHelp(ctx) {
-    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
+    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
     ctx.reply(help)
-}
-
-async function getWatchListRates(ctx) {
-    try {
-        const results = await lendingRates.getRatesByWatchlist(file.watchlist)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
-}
-
-async function getTop10Rates(ctx) {
-    try {
-        const results = await lendingRates.getAllRates(10)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
-}
-
-async function getTop10CryptoRates(ctx) {
-    try {
-        const results = await lendingRates.getCryptoRates(10)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
-}
-
-async function doesCoinExist(coin) {
-    try {
-        
-    } catch (error) {
-        
-    }
-}
-
-function generateRatesMsg(results = []) {
-    let message = ``
-    results.forEach(result => {
-        if (!result) return
-        let estimate = parseFloat(result.estimate * 24 * 365 * 100).toFixed(2) + "%"
-        message += `[${result.coin}] Estimate: ${estimate} \n`
-    })
-    return message
-}
-
-function generateBalanceSheet(arrayOfBalance) {
-    let message = `Balances: \n`
-    let counter = 0
-    arrayOfBalance.forEach(balance => {
-        if(balance.total === 0) return
-        counter++
-        message += `[${balance.coin}] Total: ${balance.total}, Value: USD$${balance.usdValue.toFixed(2)} \n`
-    })
-    return (counter === 0) ? `No balances` : message
 }
 
 function save(newFile) {
