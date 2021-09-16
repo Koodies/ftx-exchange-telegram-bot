@@ -1,10 +1,10 @@
 'use strict'
 require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
-const lendingRates = require('./src/ftx/lendingRates')
-const lending = require('./src/ftx/lending')
+const rateCtrl = require('./src/controller/rate')
+const jobCtrl = require('./src/controller/cronJob')
 const wallet = require('./src/ftx/wallet')
-const ftxDB = require('./src/ftx/database')
+const localDB = require('./src/controller/localDB')
 const filePath = "./database.json"
 const file = require(filePath)
 const fs = require('fs')
@@ -30,7 +30,7 @@ watchListScene.command('list', ctx => {
     ctx.reply(message)
 })
 watchListScene.command('update', async ctx => {
-    let coinsJSON = await ftxDB.getLendingCoinDatabase()
+    let coinsJSON = await localDB.getLendingCoinDatabase()
     file['db'] = coinsJSON
     file['lastUpdated'] = Date.now()
     save(file)
@@ -126,12 +126,12 @@ bot.command('stop', ctx => stopLending(ctx))
 bot.launch()
 
 async function startLending(ctx) {
-    lending.start()
+    jobCtrl.start()
     ctx.reply('Start lending')
 }
 
 function stopLending(ctx) {
-    lending.stop()
+    jobCtrl.stop()
     ctx.reply('Stopping lending')
 }
 
@@ -159,7 +159,7 @@ function getHelp(ctx) {
 
 async function getWatchListRates(ctx) {
     try {
-        const results = await lendingRates.getRatesByWatchlist(file.watchlist)
+        const results = await rateCtrl.getRatesByWatchlist(file.watchlist)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -169,7 +169,7 @@ async function getWatchListRates(ctx) {
 
 async function getTop10Rates(ctx) {
     try {
-        const results = await lendingRates.getAllRates(10)
+        const results = await rateCtrl.getAllRates(10)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
@@ -179,7 +179,7 @@ async function getTop10Rates(ctx) {
 
 async function getTop10CryptoRates(ctx) {
     try {
-        const results = await lendingRates.getCryptoRates(10)
+        const results = await rateCtrl.getCryptoRates(10)
         const message = generateRatesMsg(results)
         ctx.reply(message)
     } catch (error) {
