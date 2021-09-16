@@ -8,31 +8,40 @@ const file = require(filePath)
 class Rate {
     /**
      * Get an array of rates of coin in desc order
-     * @param  {Integer} count
      */
-    static async getAllRates(count) {
-        const res = await spotMargin.getRates()
-        if(res.error) return
-        const arrayOfRates = res.data
-        return getTopRates(arrayOfRates, count)
+    static async getTop10Rates() {
+        try {
+            const res = await spotMargin.getRates()
+            if(res.error) return
+            const arrayOfRates = res.data
+            let result = getTopRates(arrayOfRates, count)
+            return generateRatesMsg(result)
+        } catch (error) {
+            console.log(`Error: Fail to retrieve top 10 rates`)
+            return `No rates found`
+        }
     }
 
     /**
      * Get an array of rates of crypto coins exluding tokenized stocks in desc order
-     * @param  {Integer} count
      */
-    static async getCryptoRates(count) {
-        const res = await spotMargin.getRates()
-        if(res.error) return
-        const arrayOfRates = res.data
-        let arrayOfCryptoRates = []
-        arrayOfRates.forEach(rate => {
-            let doc = _.find(file.db, o => { return o.id === rate.coin })
-            if (!doc || doc['tokenizedEquity']) return
-            arrayOfCryptoRates.push(rate)
-        })
-        return getTopRates(arrayOfCryptoRates, count)
-
+    static async getTop10CryptoRates() {
+        try {
+            const res = await spotMargin.getRates()
+            if(res.error) return
+            const arrayOfRates = res.data
+            let arrayOfCryptoRates = []
+            arrayOfRates.forEach(rate => {
+                let doc = _.find(file.db, o => { return o.id === rate.coin })
+                if (!doc || doc['tokenizedEquity']) return
+                arrayOfCryptoRates.push(rate)
+            })
+            let result = getTopRates(arrayOfCryptoRates, count)
+            return generateRatesMsg(result)
+        } catch (error) {
+            console.log(`Error: Fail to retrieve top 10 crypto rates`)
+            return `No rates found`
+        }
     }
 
     /**
@@ -40,15 +49,20 @@ class Rate {
      * @param  {} coins=[]
      */
     static async getRatesByWatchlist(coins = []) {
-        const res = await spotMargin.getRates()
-        if(res.error) return
-        const arrayOfRates = res.data
-        let result = []
-        coins.forEach(coin => {
-            let index = arrayOfRates.findIndex(rates => rates['coin'].match(new RegExp((`^${coin.toUpperCase()}$`))))
-            result.push(arrayOfRates[index])
-        })
-        return result
+        try {
+            const res = await spotMargin.getRates()
+            if(res.error) return
+            const arrayOfRates = res.data
+            let result = []
+            coins.forEach(coin => {
+                let index = arrayOfRates.findIndex(rates => rates['coin'].match(new RegExp((`^${coin.toUpperCase()}$`))))
+                result.push(arrayOfRates[index])
+            })
+            return result
+        } catch (error) {
+            console.log(`Error: Fail to retrieve rates using watchlist`)
+            return `No rates found`
+        }
     }
     
 }//end of rate
@@ -61,6 +75,16 @@ class Rate {
 function getTopRates(arrayOfRates, count = 0) {
     let arrayOfOrderedRates = _.orderBy(arrayOfRates, ['estimate'], ['desc'])
     return (count === 0) ? arrayOfOrderedRates : arrayOfOrderedRates.slice(0, count - 1)
+}
+
+function generateRatesMsg(results = []) {
+    let message = ``
+    results.forEach(result => {
+        if (!result) return
+        let estimate = parseFloat(result.estimate * 24 * 365 * 100).toFixed(2) + "%"
+        message += `[${result.coin}] Estimate: ${estimate} \n`
+    })
+    return message
 }
 
 module.exports = Rate
