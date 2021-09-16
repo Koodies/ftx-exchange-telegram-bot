@@ -40,7 +40,7 @@ async function lendOut(listOfCoins, listOfBalances) {
     listOfLending.forEach(async lend => {
         const balance = _.find(listOfBalances[account], coin => { return coin.coin === lend })
         const doc = _.find(listOfCoins, coin => { return coin.coin === lend })
-        if (balance.availableWithoutBorrow === 0 || !doc) {
+        if (!doc || !balance || balance.availableWithoutBorrow === 0) {
             console.log(`${lend}: no funds`)
             return
         }

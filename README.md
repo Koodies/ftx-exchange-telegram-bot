@@ -9,7 +9,7 @@ A readme on how to set up FTX-Telegram Bot
   - [Run setup script](#run-setup-script)
   - [[Temporary] Create these files on the main folder](#temporary-create-these-files-on-the-main-folder)
   - [Create a telegram bot](#create-a-telegram-bot)
-  - [Create a FTX API](#create-a-ftx-api)
+  - [Create a FTX API & enable spot margin trading](#create-a-ftx-api--enable-spot-margin-trading)
   - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
@@ -68,13 +68,16 @@ database.json
 2. BotFather will give you a token, something like 123456789:AbCdfGhIJKlmNoQQRsTUVwxyZ.
 3. Paste the token under .env file
 
-## Create a FTX API
+## Create a FTX API & enable spot margin trading
 1. Head over to https://ftx.com/profile
 2. Select the API tab
 3. Create API Key
 4. Copy both the key and paste it under .env file
 5. Make sure none of the permissions are enabled
-6. (Optional) - Create a sub account
+6. Select the Margin tab
+7. Click on "Enable Spot Margin Trading"
+
+*(Optional) - Create a sub account
 
 ## Ready to spin
 
