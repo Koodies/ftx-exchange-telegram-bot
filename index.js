@@ -129,13 +129,13 @@ bot.command('stop', ctx => stopLending(ctx))
 bot.launch()
 
 async function startLending(ctx) {
-    jobCtrl.start()
-    ctx.reply('Start lending')
+    let result = await jobCtrl.start()
+    ctx.reply(result)
 }
 
-function stopLending(ctx) {
-    jobCtrl.stop()
-    ctx.reply('Stopping lending')
+async function stopLending(ctx) {
+    let result = await jobCtrl.stop()
+    ctx.reply(result)
 }
 
 function whois(ctx) {
