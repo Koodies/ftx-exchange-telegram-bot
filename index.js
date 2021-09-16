@@ -77,16 +77,17 @@ const lendingHelp = `List of available commands:
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
-lendingScene.command('top10', ctx => {
+lendingScene.command('top10',  async ctx => {
     const msg = await rateCtrl.getTop10Rates()
     ctx.reply(msg)
 })
-lendingScene.command('top10crypto', ctx => {
+lendingScene.command('top10crypto', async ctx => {
     const msg = await rateCtrl.getTop10CryptoRates()
     ctx.reply(msg)
 })
-lendingScene.command('watchlist', ctx => {
-    getWatchListRates(ctx)
+lendingScene.command('watchlist', async ctx => {
+    const message = await rateCtrl.getRatesByWatchlist(file.watchlist)
+    ctx.reply(message)
 })
 lendingScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
@@ -151,16 +152,6 @@ function whois(ctx) {
 function getHelp(ctx) {
     const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
     ctx.reply(help)
-}
-
-async function getWatchListRates(ctx) {
-    try {
-        const results = await rateCtrl.getRatesByWatchlist(file.watchlist)
-        const message = generateRatesMsg(results)
-        ctx.reply(message)
-    } catch (error) {
-        console.log(`Error: ${error}`)
-    }
 }
 
 function save(newFile) {

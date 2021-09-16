@@ -14,10 +14,10 @@ class Rate {
             const res = await spotMargin.getRates()
             if(res.error) return
             const arrayOfRates = res.data
-            let result = getTopRates(arrayOfRates, count)
+            let result = getTopRates(arrayOfRates, 10)
             return generateRatesMsg(result)
         } catch (error) {
-            console.log(`Error: Fail to retrieve top 10 rates`)
+            console.log(`Error: Fail to retrieve top 10 rates ${error}`)
             return `No rates found`
         }
     }
@@ -36,17 +36,17 @@ class Rate {
                 if (!doc || doc['tokenizedEquity']) return
                 arrayOfCryptoRates.push(rate)
             })
-            let result = getTopRates(arrayOfCryptoRates, count)
+            let result = getTopRates(arrayOfCryptoRates, 10)
             return generateRatesMsg(result)
         } catch (error) {
-            console.log(`Error: Fail to retrieve top 10 crypto rates`)
+            console.log(`Error: Fail to retrieve top 10 crypto rates ${error}`)
             return `No rates found`
         }
     }
 
     /**
      * Get an array of rates of coins under watchlist
-     * @param  {} coins=[]
+     * @param  {Array} coins=[]
      */
     static async getRatesByWatchlist(coins = []) {
         try {
@@ -58,9 +58,9 @@ class Rate {
                 let index = arrayOfRates.findIndex(rates => rates['coin'].match(new RegExp((`^${coin.toUpperCase()}$`))))
                 result.push(arrayOfRates[index])
             })
-            return result
+            return generateRatesMsg(result)
         } catch (error) {
-            console.log(`Error: Fail to retrieve rates using watchlist`)
+            console.log(`Error: Fail to retrieve rates using watchlist ${error}`)
             return `No rates found`
         }
     }
