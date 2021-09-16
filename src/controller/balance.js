@@ -4,9 +4,11 @@ const wallet = require('../ftx/wallet')
 class Balance {
     static async getBalance() {
         try {
-            let arrayOfBalance = await wallet.getBalances()
-            return generateBalanceSheet(arrayOfBalance)
+            let res = await wallet.getBalances()
+            if(res.error) return `No Balance Found`
+            return generateBalanceSheet(res.data)
         } catch (error) {
+            console.log(`Error: ${error}`)
             return `No Balances Found`
         }
     }

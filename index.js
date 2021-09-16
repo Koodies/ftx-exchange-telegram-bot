@@ -118,8 +118,8 @@ bot.use(session())
 bot.use(stage.middleware())
 bot.help((ctx) => getHelp(ctx))
 bot.command('start', ctx => startLending(ctx))
-bot.command('balance', ctx => {
-    let msg = balanceCtrl.getBalance()
+bot.command('balance', async ctx => {
+    let msg = await balanceCtrl.getBalance()
     ctx.reply(msg)
 })
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
@@ -150,7 +150,7 @@ function whois(ctx) {
 }
 
 function getHelp(ctx) {
-    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
+    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
     ctx.reply(help)
 }
 
