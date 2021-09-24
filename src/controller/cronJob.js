@@ -11,12 +11,13 @@ var lending = new Cronjob('0 50 * * * *', lendOut, null, false, 'America/Los_Ang
 class CronJob {
     static async start() {
         try {
+            if(lending.running) return `Its running`
             let coinRes = await spotMargin.getRates()
             let walletRes = await wallet.getAllBalances()
             if (walletRes.error || coinRes.error) throw new Error(`Error on retrieving rates & balances`)
             lendOut(coinRes.data, walletRes.data) //TODO: to add check, if got balances & return error msg on failure
             lending.start()
-            return `Successfully start lending`
+            return (lending.running) ? `Successfully start lending` : `Failed to start lending`
         } catch (error) {
             return `${error.message}`
         }
@@ -24,6 +25,7 @@ class CronJob {
 
     static async stop() {
         try {
+            if(!lending.running) return `Its not running`
             lending.stop()
             let { error, data } = await spotMargin.getLendingInfo()
             if (error) throw new Error(`Error on retrieving lending information`)
