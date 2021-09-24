@@ -1,7 +1,8 @@
 const _ = require('lodash')
 const wallet = require('../ftx/wallet')
 const spotMargin = require('../ftx/spotMargin')
-const Cronjob = require('cron').CronJob;
+const fileCtrl = require('./file')
+const Cronjob = require('cron').CronJob
 const filePath = "../../database.json"
 const file = require(filePath)
 const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
@@ -37,16 +38,23 @@ class CronJob {
 
 async function lendOut(listOfCoins, listOfBalances) {
     const listOfLending = file.lending
+    let arrayOfLendingResult = []
     listOfLending.forEach(async lend => {
         const balance = _.find(listOfBalances[account], coin => { return coin.coin === lend })
         const doc = _.find(listOfCoins, coin => { return coin.coin === lend })
         if (!doc || !balance || balance.availableWithoutBorrow === 0) {
-            console.log(`${lend}: no funds`)
+            arrayOfLendingResult.push({ lendOut: false, coin: lend, exist: !!doc, inWallet: !!balance, balance: balance?.availableWithoutBorrow })
             return
         }
-        let offerRes = await spotMargin.sendLendingOffer(lend, balance.availableWithoutBorrow)
-        if (offerRes.error) console.log(`Error on lending: ${offerRes.data}`)
+        let offerRes = await spotMargin.sendLendingOffer(lend, balance?.availableWithoutBorrow)
+        if (offerRes.error) {
+            arrayOfLendingResult.push({ lendOut: false, coin: lend, balance: balance?.availableWithoutBorrow, error: offerRes?.data })
+            return
+        }
+        arrayOfLendingResult.push({ lendOut: true, coin: lend, balance: balance?.availableWithoutBorrow })
     })
+    fileCtrl.saveLogs(arrayOfLendingResult)
+    return arrayOfLendingResult
 }
 
 async function stopAllLend(data) {
