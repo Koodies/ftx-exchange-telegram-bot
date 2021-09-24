@@ -5,9 +5,9 @@ const rateCtrl = require('./src/controller/rate')
 const jobCtrl = require('./src/controller/cronJob')
 const balanceCtrl = require('./src/controller/balance')
 const localDB = require('./src/controller/localDB')
+const fileCtrl = require('./src/controller/file')
 const filePath = "./database.json"
 const file = require(filePath)
-const fs = require('fs')
 const _ = require('lodash')
 
 //watch list scene
@@ -23,17 +23,14 @@ watchListScene.enter(ctx => ctx.reply(`Welcome to watch tower\n ${watchHelp}`))
 watchListScene.help((ctx) => ctx.reply(watchHelp))
 watchListScene.command('list', ctx => {
     let message = `Last updated: ${new Date(file['lastUpdated'])} \n`;
-    let arrayOfSupportedCoins = file['db']
-    arrayOfSupportedCoins.forEach(coin => {
+    file['db'].forEach(coin => {
         message += `[${coin.id}] - ${coin.name} \n`
     })
     ctx.reply(message)
 })
 watchListScene.command('update', async ctx => {
     let coinsJSON = await localDB.getLendingCoinDatabase()
-    file['db'] = coinsJSON
-    file['lastUpdated'] = Date.now()
-    save(file)
+    fileCtrl.updateDB(coinsJSON)
     ctx.reply('Updated database')
 })
 watchListScene.command('current', ctx => {
@@ -47,20 +44,13 @@ watchListScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
     //TODO: doesCoinExist
-    file.watchlist.push(coin)
-    save(file)
+    fileCtrl.addtoWatchlist(coin)
     ctx.reply(`Added ${coin}`)
 })
 watchListScene.command('remove', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    const index = file.watchlist.indexOf(coin)
-    if (index === -1) {
-        ctx.reply(`${coin} is not in the list`)
-        return
-    }
-    file.watchlist.splice(index, 1)
-    save(file)
+    fileCtrl.rmFromWatchlist(coin)
     ctx.reply(`Removed ${coin}`)
 })
 watchListScene.command('back', ctx => { return ctx.scene.leave() })
@@ -92,20 +82,13 @@ lendingScene.command('watchlist', async ctx => {
 lendingScene.command('add', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    file.lending.push(coin)
-    save(file)
+    fileCtrl.addToLendingList(coin)
     ctx.reply(`Added ${coin} into lending list`)
 })
 lendingScene.command('remove', ctx => {
     let value = ctx.message.text.split(" ")
     let coin = value[1].toUpperCase()
-    const index = file.lending.indexOf(coin)
-    if (index === -1) {
-        ctx.reply(`${coin} is not in the lending list`)
-        return
-    }
-    file.watchlist.splice(index, 1)
-    save(file)
+    fileCtrl.rmFromLendinglist(coin)
     ctx.reply(`Removed ${coin} from lending list`)
 })
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
@@ -117,7 +100,8 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.use(session())
 bot.use(stage.middleware())
 bot.help((ctx) => getHelp(ctx))
-bot.command('start', ctx => startLending(ctx))
+bot.start((ctx) => getHelp(ctx))
+bot.command('startlend', ctx => startLending(ctx))
 bot.command('balance', async ctx => {
     let msg = await balanceCtrl.getBalance()
     ctx.reply(msg)
@@ -125,7 +109,7 @@ bot.command('balance', async ctx => {
 bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
 bot.command('whois', ctx => whois(ctx))
-bot.command('stop', ctx => stopLending(ctx))
+bot.command('stoplend', ctx => stopLending(ctx))
 bot.launch()
 
 async function startLending(ctx) {
@@ -150,15 +134,8 @@ function whois(ctx) {
 }
 
 function getHelp(ctx) {
-    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/start - Start auto-compounding\n/stop - Stop lending`
+    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/startlend - Start auto-compounding\n/stoplend - Stop lending`
     ctx.reply(help)
-}
-
-function save(newFile) {
-    fs.writeFile(filePath, JSON.stringify(newFile), (err) => {
-        if (err) return console.log(err)
-        console.log(`Successfully saved database.json`)
-    })
 }
 
 // Enable graceful stop
