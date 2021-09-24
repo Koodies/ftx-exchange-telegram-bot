@@ -40,8 +40,11 @@ class File {
         saveDB(file)
     }
 
-    static saveLogs(logs) {
-        file.logs.push(logs)
+    static saveLogs(newLog) {
+        let logs = file.logs
+        logs.push(newLog)
+        while(logs.length > 10) logs = logs.slice()
+        file.logs = logs
         saveDB(file)
     }
 }//end of LocalDB
