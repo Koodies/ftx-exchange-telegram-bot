@@ -1,5 +1,5 @@
 # FTX-Telegram Bot ReadMe
-A readme on how to set up FTX-Telegram Bot
+A readme on how to set up FTX-Telegram hourly autolending bot.
 
 # Table of contents
 - [FTX-Telegram Bot ReadMe](#ftx-telegram-bot-readme)
@@ -13,12 +13,13 @@ A readme on how to set up FTX-Telegram Bot
   - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
-    - [start - Global](#start---global)
-    - [stop - Global](#stop---global)
-    - [balance - Global](#balance---global)
     - [watchlist](#watchlist)
     - [lending - Global](#lending---global)
+    - [balance - Global](#balance---global)
     - [whois - Global](#whois---global)
+    - [startlend - Global](#startlend---global)
+    - [stoplend - Global](#stoplend---global)
+    - [displaylogs - Global](#displaylogs---global)
   - [Watchlist](#watchlist-1)
     - [list](#list)
     - [update](#update)
@@ -87,23 +88,26 @@ database.json
 
 ## Main
 [(Back to top)](#table-of-contents)
-### start - Global
-Issue a /start command to start the hourly lending cron job
-
-### stop - Global
-Issue a /stop command to stop the hourly lending cron job and remove all funds from the lending pool.
-
-### balance - Global
-Issue a /balance command to view your current balance in your FTX account
-
 ### watchlist
-Issue a /watchlist command to enter the watch list scene
+Issue a /watchlist command to enter the watch list scene.
 
 ### lending - Global
-Issue a /lending command to enter the lending scene
+Issue a /lending command to enter the lending scene.
+
+### balance - Global
+Issue a /balance command to view your current balance in your FTX account.
 
 ### whois - Global
-Issue a /whois command with a ticker symbol of the coin to get the full name of the coin
+Issue a /whois command with a ticker symbol of the coin to get the full name of the coin.
+
+### startlend - Global
+Issue a /start command to start the hourly lending cron job.
+
+### stoplend - Global
+Issue a /stop command to stop the hourly lending cron job and remove all funds from the lending pool.
+
+### displaylogs - Global
+Issue a /displaylogs command to display last 10 logs.
 
 ## Watchlist
 [(Back to top)](#table-of-contents)
