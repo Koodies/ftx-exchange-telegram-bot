@@ -43,7 +43,7 @@ class File {
     static saveLogs(newLog) {
         let logs = file.logs
         logs.push(newLog)
-        while(logs.length > 10) logs = logs.slice()
+        while(logs.length > 10) logs = logs.slice(1)
         file.logs = logs
         saveDB(file)
     }

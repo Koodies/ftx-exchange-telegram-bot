@@ -6,16 +6,13 @@ const Cronjob = require('cron').CronJob
 const filePath = "../../database.json"
 const file = require(filePath)
 const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
-var lending = new Cronjob('0 50 * * * *', lendOut, null, false, 'America/Los_Angeles');
+var lending = new Cronjob('0 50 * * * *', startLending, null, false, 'America/Los_Angeles');
 
 class CronJob {
     static async start() {
         try {
             if (lending.running) return `Its running`
-            let coinRes = await spotMargin.getRates()
-            let walletRes = await wallet.getAllBalances()
-            if (walletRes.error || coinRes.error) throw new Error(`Error on retrieving rates & balances`)
-            lendOut(coinRes.data, walletRes.data) //TODO: to add check, if got balances & return error msg on failure
+            startLending()
             lending.start()
             return (lending.running) ? `Successfully start lending` : `Failed to start lending`
         } catch (error) {
@@ -35,23 +32,29 @@ class CronJob {
             return `${error.message}`
         }
     }
-
 }// end of CronJob
 
-async function lendOut(listOfCoins, listOfBalances) {
-    const listOfLending = file.lending
-    let pLending = []
-    listOfLending.forEach(lend => {
-        pLending.push(lendPromise(listOfCoins, listOfBalances, lend))
-    })
-    await Promise.all(pLending).then(
+async function startLending() {
+    let coinRes = await spotMargin.getRates()
+    let walletRes = await wallet.getAllBalances()
+    if (walletRes.error || coinRes.error) throw new Error(`Error on retrieving rates & balances`)
+    genLendReqs(coinRes.data, walletRes.data).then(
         results => {
             fileCtrl.saveLogs({ lend: results, timestamp: Date.now() })
         }
     )
 }
 
-function lendPromise(listOfCoins, listOfBalances, lendCoin) {
+function genLendReqs(listOfCoins, listOfBalances) {
+    const listOfLending = file.lending
+    let pLending = []
+    listOfLending.forEach(lend => {
+        pLending.push(genLendReq(listOfCoins, listOfBalances, lend))
+    })
+    return Promise.all(pLending);
+}
+
+function genLendReq(listOfCoins, listOfBalances, lendCoin) {
     return new Promise(async (resolve, reject) => {
         const balance = _.find(listOfBalances[account], coin => { return coin.coin === lendCoin })
         const doc = _.find(listOfCoins, coin => { return coin.coin === lendCoin })

@@ -118,4 +118,5 @@ dist
 .pnp.*
 
 # Others
+*.sh
 database.json
