@@ -4,6 +4,7 @@ const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
 const rateCtrl = require('./src/controller/rate')
 const jobCtrl = require('./src/controller/cronJob')
 const balanceCtrl = require('./src/controller/balance')
+const logCtrl = require('./src/controller/logs')
 const localDB = require('./src/controller/localDB')
 const fileCtrl = require('./src/controller/file')
 const filePath = "./database.json"
@@ -114,6 +115,7 @@ bot.command('watchlist', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lending', ctx => ctx.scene.enter('lendingScene'))
 bot.command('whois', ctx => whois(ctx))
 bot.command('stoplend', ctx => stopLending(ctx))
+bot.command('displaylogs', ctx => displayLogs(ctx))
 bot.launch()
 
 async function startLending(ctx) {
@@ -123,6 +125,11 @@ async function startLending(ctx) {
 
 async function stopLending(ctx) {
     let result = await jobCtrl.stop()
+    ctx.reply(result)
+}
+
+async function displayLogs(ctx) {
+    let result = logCtrl.getLendingLogs()
     ctx.reply(result)
 }
 
@@ -138,7 +145,7 @@ function whois(ctx) {
 }
 
 function getHelp(ctx) {
-    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/startlend - Start auto-compounding\n/stoplend - Stop lending`
+    const help = `List of commands:\n/watchlist - Enter watchlist scene\n/lending - Enter lending scene\n/balance - Check your current FTX account balance\n/whois <coin> - Check the full name of the coin\n/startlend - Start auto-compounding\n/stoplend - Stop lending\n/displaylogs - Display Lending Logs`
     ctx.reply(help)
 }
 
