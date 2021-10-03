@@ -55,14 +55,10 @@ function lendPromise(listOfCoins, listOfBalances, lendCoin) {
     return new Promise(async (resolve, reject) => {
         const balance = _.find(listOfBalances[account], coin => { return coin.coin === lendCoin })
         const doc = _.find(listOfCoins, coin => { return coin.coin === lendCoin })
-        if (!doc || !balance || balance.availableWithoutBorrow === 0) {
-            resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.availableWithoutBorrow, error: 'Missing coin or balance' })
-        }
+        if (!doc || !balance || balance.total === 0) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: 'Missing coin or balance' })
         let offerRes = await spotMargin.sendLendingOffer(lendCoin, balance?.total)
-        if (offerRes.error) {
-            resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.availableWithoutBorrow, error: offerRes?.data })
-        }
-        resolve({ lendOut: true, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.availableWithoutBorrow })
+        if (offerRes.error) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: offerRes?.data })
+        resolve({ lendOut: true, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total })
     })
 }
 
