@@ -50,6 +50,7 @@ class Rate {
      */
     static async getRatesByWatchlist(coins = []) {
         try {
+            if(coins.length === 0) throw new Error(`Watchlist is empty`)
             const res = await spotMargin.getRates()
             if(res.error) return
             const arrayOfRates = res.data
