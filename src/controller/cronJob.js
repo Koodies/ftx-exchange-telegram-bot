@@ -11,7 +11,7 @@ var lending = new Cronjob('0 50 * * * *', lendOut, null, false, 'America/Los_Ang
 class CronJob {
     static async start() {
         try {
-            if(lending.running) return `Its running`
+            if (lending.running) return `Its running`
             let coinRes = await spotMargin.getRates()
             let walletRes = await wallet.getAllBalances()
             if (walletRes.error || coinRes.error) throw new Error(`Error on retrieving rates & balances`)
@@ -25,7 +25,7 @@ class CronJob {
 
     static async stop() {
         try {
-            if(!lending.running) return `Its not running`
+            if (!lending.running) return `Its not running`
             lending.stop()
             let { error, data } = await spotMargin.getLendingInfo()
             if (error) throw new Error(`Error on retrieving lending information`)
@@ -40,23 +40,26 @@ class CronJob {
 
 async function lendOut(listOfCoins, listOfBalances) {
     const listOfLending = file.lending
-    let arrayOfLendingResult = []
-    listOfLending.forEach(async lend => {
-        const balance = _.find(listOfBalances[account], coin => { return coin.coin === lend })
-        const doc = _.find(listOfCoins, coin => { return coin.coin === lend })
-        if (!doc || !balance || balance.availableWithoutBorrow === 0) {
-            arrayOfLendingResult.push({ lendOut: false, coin: lend, exist: !!doc, inWallet: !!balance, balance: balance?.availableWithoutBorrow })
-            return
-        }
-        let offerRes = await spotMargin.sendLendingOffer(lend, balance?.availableWithoutBorrow)
-        if (offerRes.error) {
-            arrayOfLendingResult.push({ lendOut: false, coin: lend, balance: balance?.availableWithoutBorrow, error: offerRes?.data })
-            return
-        }
-        arrayOfLendingResult.push({ lendOut: true, coin: lend, balance: balance?.availableWithoutBorrow })
+    let pLending = []
+    listOfLending.forEach(lend => {
+        pLending.push(lendPromise(listOfCoins, listOfBalances, lend))
     })
-    fileCtrl.saveLogs(arrayOfLendingResult)
-    return arrayOfLendingResult
+    await Promise.all(pLending).then(
+        results => {
+            fileCtrl.saveLogs({ lend: results, timestamp: Date.now() })
+        }
+    )
+}
+
+function lendPromise(listOfCoins, listOfBalances, lendCoin) {
+    return new Promise(async (resolve, reject) => {
+        const balance = _.find(listOfBalances[account], coin => { return coin.coin === lendCoin })
+        const doc = _.find(listOfCoins, coin => { return coin.coin === lendCoin })
+        if (!doc || !balance || balance.total === 0) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: 'Missing coin or balance' })
+        let offerRes = await spotMargin.sendLendingOffer(lendCoin, balance?.total)
+        if (offerRes.error) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: offerRes?.data })
+        resolve({ lendOut: true, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total })
+    })
 }
 
 async function stopAllLend(data) {
