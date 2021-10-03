@@ -6,6 +6,7 @@ const file = require(filePath)
 class Logs {
     static getLendingLogs() {
         let msgs = ``
+        if(file.logs.length === 0) return `No logs found`
         file.logs.forEach(log => {
             msgs += genLogMessage(log)
         })
