@@ -35,9 +35,13 @@ watchListScene.command('update', async ctx => {
 })
 watchListScene.command('current', ctx => {
     let list = ``
-    file.watchlist.forEach(coin => {
-        list += `${coin}\n`
-    })
+    if(file.watchlist.length > 0) {
+        file.watchlist.forEach(coin => {
+            list += `${coin}\n`
+        })
+    } else {
+        list = `Watchlist is empty, Please use\n/add <coin> to add into your watchlist`
+    }
     ctx.reply(list)
 })
 watchListScene.command('add', ctx => {
