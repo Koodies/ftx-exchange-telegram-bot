@@ -1,4 +1,15 @@
 'use strict'
+const fs = require("fs");
+const filePath = "./database.json"
+const emptyDB = "./database-empty.json"
+if (!fs.existsSync(filePath)) {
+    let data = fs.readFileSync(emptyDB)
+    fs.writeFileSync(filePath, data, { overwrite: false }, function (err) {
+        if (err) throw err;
+        console.log('database.json generated')
+    })
+}
+
 require('dotenv').config()
 const { Telegraf, session, Scenes: { BaseScene, Stage } } = require('telegraf')
 const rateCtrl = require('./src/controller/rate')
@@ -7,7 +18,6 @@ const balanceCtrl = require('./src/controller/balance')
 const logCtrl = require('./src/controller/logs')
 const localDB = require('./src/controller/localDB')
 const fileCtrl = require('./src/controller/file')
-const filePath = "./database.json"
 const file = require(filePath)
 const _ = require('lodash')
 
@@ -36,7 +46,7 @@ watchListScene.command('update', async ctx => {
 })
 watchListScene.command('current', ctx => {
     let list = ``
-    if(file.watchlist.length > 0) {
+    if (file.watchlist.length > 0) {
         file.watchlist.forEach(coin => {
             list += `${coin}\n`
         })
@@ -72,7 +82,7 @@ const lendingHelp = `List of available commands:
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
-lendingScene.command('top10',  async ctx => {
+lendingScene.command('top10', async ctx => {
     const msg = await rateCtrl.getTop10Rates()
     ctx.reply(msg)
 })
