@@ -40,7 +40,7 @@ watchListScene.command('list', ctx => {
     ctx.reply(message)
 })
 watchListScene.command('update', async ctx => {
-    let coinsJSON = await localDB.getLendingCoinDatabase()
+    const coinsJSON = await localDB.getLendingCoinDatabase()
     fileCtrl.updateDB(coinsJSON)
     ctx.reply('Updated database')
 })
@@ -56,17 +56,16 @@ watchListScene.command('current', ctx => {
     ctx.reply(list)
 })
 watchListScene.command('add', ctx => {
-    let value = ctx.message.text.split(" ")
-    let coin = value[1].toUpperCase()
-    //TODO: doesCoinExist
-    fileCtrl.addtoWatchlist(coin)
-    ctx.reply(`Added ${coin}`)
+    const value = ctx.message.text.split(" ")
+    const coin = value[1].toUpperCase()
+    const message = fileCtrl.addtoWatchlist(coin)
+    ctx.reply(message)
 })
 watchListScene.command('remove', ctx => {
-    let value = ctx.message.text.split(" ")
-    let coin = value[1].toUpperCase()
-    fileCtrl.rmFromWatchlist(coin)
-    ctx.reply(`Removed ${coin}`)
+    const value = ctx.message.text.split(" ")
+    const coin = value[1].toUpperCase()
+    const message = fileCtrl.rmFromWatchlist(coin)
+    ctx.reply(message)
 })
 watchListScene.command('back', ctx => { return ctx.scene.leave() })
 watchListScene.leave(ctx => ctx.reply('Leaving watch tower'))
@@ -79,6 +78,7 @@ const lendingHelp = `List of available commands:
 /watchlist - Your watchlist estimated rates for the next hour
 /add <coin> - Add coin to your lending list
 /remove <coin> - Remove coin from your lending list
+/list - Display lending list
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
@@ -95,16 +95,27 @@ lendingScene.command('watchlist', async ctx => {
     ctx.reply(message)
 })
 lendingScene.command('add', ctx => {
-    let value = ctx.message.text.split(" ")
-    let coin = value[1].toUpperCase()
-    fileCtrl.addToLendingList(coin)
-    ctx.reply(`Added ${coin} into lending list`)
+    const value = ctx.message.text.split(" ")
+    const coin = value[1].toUpperCase()
+    const message = fileCtrl.addToLendingList(coin)
+    ctx.reply(message)
 })
 lendingScene.command('remove', ctx => {
-    let value = ctx.message.text.split(" ")
-    let coin = value[1].toUpperCase()
-    fileCtrl.rmFromLendinglist(coin)
-    ctx.reply(`Removed ${coin} from lending list`)
+    const value = ctx.message.text.split(" ")
+    const coin = value[1].toUpperCase()
+    const message = fileCtrl.rmFromLendinglist(coin)
+    ctx.reply(message)
+})
+lendingScene.command('list', ctx => {
+    let list = ``
+    if (file.lending.length > 0) {
+        file.lending.forEach(coin => {
+            list += `${coin}\n`
+        })
+    } else {
+        list = `Lending list is empty, Please use\n/add <coin> to add into your lending list`
+    }
+    ctx.reply(list)
 })
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
 lendingScene.leave(ctx => ctx.reply('Leaving lending scene'))
@@ -129,17 +140,17 @@ bot.command('displaylogs', ctx => displayLogs(ctx))
 bot.launch()
 
 async function startLending(ctx) {
-    let result = await jobCtrl.start()
+    const result = await jobCtrl.start()
     ctx.reply(result)
 }
 
 async function stopLending(ctx) {
-    let result = await jobCtrl.stop()
+    const result = await jobCtrl.stop()
     ctx.reply(result)
 }
 
 async function displayLogs(ctx) {
-    let result = logCtrl.getLendingLogs()
+    const result = logCtrl.getLendingLogs()
     ctx.reply(result)
 }
 
