@@ -21,14 +21,6 @@ class LocalDB {
             
         }
     }
-
-    static doesCoinExist(coin) {
-        try {
-            
-        } catch (error) {
-            
-        }
-    } 
 }//end of LocalDB
 
 module.exports = LocalDB
