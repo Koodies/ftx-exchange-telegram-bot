@@ -78,6 +78,7 @@ const lendingHelp = `List of available commands:
 /watchlist - Your watchlist estimated rates for the next hour
 /add <coin> - Add coin to your lending list
 /remove <coin> - Remove coin from your lending list
+/list - Display lending list
 /back - Return to main menu\n`
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
@@ -104,6 +105,17 @@ lendingScene.command('remove', ctx => {
     const coin = value[1].toUpperCase()
     const message = fileCtrl.rmFromLendinglist(coin)
     ctx.reply(message)
+})
+lendingScene.command('list', ctx => {
+    let list = ``
+    if (file.lending.length > 0) {
+        file.lending.forEach(coin => {
+            list += `${coin}\n`
+        })
+    } else {
+        list = `Lending list is empty, Please use\n/add <coin> to add into your lending list`
+    }
+    ctx.reply(list)
 })
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
 lendingScene.leave(ctx => ctx.reply('Leaving lending scene'))
