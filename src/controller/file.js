@@ -8,7 +8,7 @@ class File {
     static addtoWatchlist(coin) {
         if(!this.doesCoinExistInFile(coin)) return `${coin} is not found in database`
         const index = file.watchlist.indexOf(coin)
-        if (index === -1) return `${coin} is already on watchlist`
+        if (index !== -1) return `${coin} is already on watchlist`
         file.watchlist.push(coin)
         saveDB(file)
         return `Added ${coin} into watchlist`
@@ -17,7 +17,7 @@ class File {
     static addToLendingList(coin) {
         if(!this.doesCoinExistInFile(coin)) return `${coin} is not found in database`
         const index = file.lending.indexOf(coin)
-        if(index === -1) return `${coin} is already on lending list`
+        if(index !== -1) return `${coin} is already on lending list`
         file.lending.push(coin)
         saveDB(file)
         return `Added ${coin} into lending list`
