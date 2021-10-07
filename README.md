@@ -5,9 +5,9 @@ A readme on how to set up FTX-Telegram hourly autolending bot.
 - [FTX-Telegram Bot ReadMe](#ftx-telegram-bot-readme)
 - [Table of contents](#table-of-contents)
 - [Setup](#setup)
-  - [Setting up AWS](#setting-up-aws)
-  - [Run setup script](#run-setup-script)
-  - [[Temporary] Create these files on the main folder](#temporary-create-these-files-on-the-main-folder)
+  - [Environment Required](#environment-required)
+  - [Setting up on AWS [Coming Soon]](#setting-up-on-aws-coming-soon)
+  - [Create these files on the main folder](#create-these-files-on-the-main-folder)
   - [Create a telegram bot](#create-a-telegram-bot)
   - [Create a FTX API & enable spot margin trading](#create-a-ftx-api--enable-spot-margin-trading)
   - [Ready to spin](#ready-to-spin)
@@ -33,6 +33,7 @@ A readme on how to set up FTX-Telegram hourly autolending bot.
     - [watchlist](#watchlist-2)
     - [add [coin]](#add-coin-1)
     - [remove [coin]](#remove-coin-1)
+    - [list](#list-1)
     - [back](#back-1)
 - [Troubleshooting](#troubleshooting)
 - [Others](#others)
@@ -43,11 +44,12 @@ A readme on how to set up FTX-Telegram hourly autolending bot.
 # Setup
 [(Back to top)](#table-of-contents)
 
-## Setting up AWS
+## Environment Required
+* NodeJS
 
-## Run setup script
+## Setting up on AWS [Coming Soon]
 
-## [Temporary] Create these files on the main folder
+## Create these files on the main folder
 .env
 ```
 BOT_TOKEN = 'telegram-bot-token-here'
@@ -55,32 +57,28 @@ FTX_KEY = 'ftx-api-key-here'
 FTX_SECRET = 'ftx-api-secret-here'
 FTX_SUB = 'ftx-sub-account-here' #Optional
 ```
-database.json
-```
-{
-    "watchlist": [],
-    "lending": [],
-    "db": []
-}
-```
 
 ## Create a telegram bot
 1. Chat with [BotFather](https://core.telegram.org/bots#6-botfather)
 2. BotFather will give you a token, something like 123456789:AbCdfGhIJKlmNoQQRsTUVwxyZ.
-3. Paste the token under .env file
+3. Paste the token under the .env file
 
 ## Create a FTX API & enable spot margin trading
 1. Head over to https://ftx.com/profile
 2. Select the API tab
 3. Create API Key
-4. Copy both the key and paste it under .env file
+4. Copy both the key and paste it under the .env file
 5. Make sure none of the permissions are enabled
 6. Select the Margin tab
 7. Click on "Enable Spot Margin Trading"
 
-*(Optional) - Create a sub account
+*(Optional) - Create a sub account and specific it on the .env will allow you to segregate your lending. 
 
 ## Ready to spin
+1. Start a chat with your bot, link to the chat can be found on bot creation with BotFather
+2. Enter /watchlist
+3. Enter /update to update the database
+4. Proceed with lending via adding your coins on the lending menu
 
 
 # Menu
@@ -145,6 +143,9 @@ Issue a /add USD command to add USD into the lending list
 
 ### remove [coin]
 Issue a /remove USD command to remove USD from the lending list
+
+### list
+Isse a /list to display current lending list
 
 ### back
 Issue a /back command to head back to the main menu
