@@ -1,32 +1,31 @@
 const _ = require('lodash')
 const wallet = require('../ftx/wallet')
-const spotMargin = require('../ftx/spotMargin')
+const spot = require('../ftx/spotMargin')
 const fileCtrl = require('./file')
 const Cronjob = require('cron').CronJob
 const filePath = "../../database.json"
 const file = require(filePath)
 const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
-var lending = new Cronjob('0 50 * * * *', startLending, null, false, 'America/Los_Angeles');
+var lendJob = new Cronjob('0 50 * * * *', lending, null, false, 'America/Los_Angeles')
 
 class CronJob {
-    static async start() {
+    static async startLending() {
         try {
             if (lending.running) return `Its running`
-            startLending()
-            lending.start()
+            lending()
+            lendJob.start()
             return (lending.running) ? `Successfully start lending` : `Failed to start lending`
         } catch (error) {
             return `${error.message}`
         }
     }
-
-    static async stop() {
+    static async stopLending() {
         try {
             if (!lending.running) return `Its not running`
-            lending.stop()
-            let { error, data } = await spotMargin.getLendingInfo()
+            lendJob.stop()
+            let { error, data } = await spot.getLendingInfo()
             if (error) throw new Error(`Error on retrieving lending information`)
-            stopAllLend(data)   //TODO: to add check for failure
+            stopAllLend(data)
             return `Successfully stopped all offer(s)`
         } catch (error) {
             return `${error.message}`
@@ -34,41 +33,56 @@ class CronJob {
     }
 }// end of CronJob
 
-async function startLending() {
-    let coinRes = await spotMargin.getRates()
+async function lending() {
+    let spotRes = await spot.getRates()
     let walletRes = await wallet.getAllBalances()
-    if (walletRes.error || coinRes.error) throw new Error(`Error on retrieving rates & balances`)
-    genLendReqs(coinRes.data, walletRes.data).then(
+    if (walletRes.error || spotRes.error) throw new Error(`Error on retrieving rates & balances`)
+    genLendReqs(spotRes.data, walletRes.data).then(
         results => {
-            fileCtrl.saveLogs({ lend: results, timestamp: Date.now() })
+            fileCtrl.saveLendingLog({ lend: results, timestamp: Date.now() })
         }
     )
 }
 
-function genLendReqs(listOfCoins, listOfBalances) {
-    const listOfLending = file.lending
-    let pLending = []
-    listOfLending.forEach(lend => {
-        pLending.push(genLendReq(listOfCoins, listOfBalances, lend))
+/**
+ * Generate lending requests
+ * @param  {Array} rateOfCoins
+ * @param  {Array} balances
+ */
+function genLendReqs(rateOfCoins = [], balances = []) {
+    const lendingList = file.lending
+    let promises = []
+    lendingList.forEach(ticker => {
+        const rateDoc = _.find(rateOfCoins, rate => { return rate.coin === ticker })
+        const balDoc = _.find(balances[account], balance => { return balance.coin === ticker })
+        promises.push(genLendReqPromise(rateDoc, balDoc, ticker))
     })
-    return Promise.all(pLending);
+    return Promise.all(promises)
 }
 
-function genLendReq(listOfCoins, listOfBalances, lendCoin) {
+/**
+ * Generate lending request promise
+ * @param  {Object} rate
+ * @param  {Object} balance
+ * @param  {String} coin
+ */
+function genLendReqPromise(rate, balance, coin) {
     return new Promise(async (resolve, reject) => {
-        const balance = _.find(listOfBalances[account], coin => { return coin.coin === lendCoin })
-        const doc = _.find(listOfCoins, coin => { return coin.coin === lendCoin })
-        if (!doc || !balance || balance.total === 0) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: 'Missing coin or balance' })
-        let offerRes = await spotMargin.sendLendingOffer(lendCoin, balance?.total)
-        if (offerRes.error) resolve({ lendOut: false, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total, error: offerRes?.data })
-        resolve({ lendOut: true, coin: lendCoin, exist: !!doc, inWallet: !!balance, balance: balance?.total })
+        if (!rate || !balance || balance.total === 0) resolve({ lendOut: false, coin, exist: !!rate, inWallet: !!balance, balance: balance?.total, error: 'Missing coin or balance' })
+        let offerRes = await spot.sendLendingOffer(coin, balance?.total)
+        if (offerRes.error) resolve({ lendOut: false, coin, exist: !!rate, inWallet: !!balance, balance: balance?.total, error: offerRes?.data })
+        resolve({ lendOut: true, coin, exist: !!rate, inWallet: !!balance, balance: balance?.total })
     })
 }
 
-async function stopAllLend(data) {
-    data.forEach(async coin => {
+/**
+ * Stop all lending using data of coins retrieved from FTX
+ * @param  {Array} coins
+ */
+async function stopAllLend(coins) {
+    coins.forEach(async coin => {
         if (coin.offered === 0) return
-        let result = await spotMargin.stopLendingOffer(coin.coin)
+        let result = await spot.stopLendingOffer(coin.coin)
         if (result.error) console.log(`Error on stopping lending: ${result.data}`)
     })
 }
