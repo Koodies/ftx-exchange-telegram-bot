@@ -11,18 +11,19 @@ var lendJob = new Cronjob('0 50 * * * *', lending, null, false, 'America/Los_Ang
 class CronJob {
     static async startLending() {
         try {
-            if (lending.running) return `Its running`
+            if (lendJob.running) return `It's running`
             lending()
             lendJob.start()
-            return (lending.running) ? `Successfully start lending` : `Failed to start lending`
+            return (lendJob.running) ? `Successfully start lending` : `Failed to start lending`
         } catch (error) {
             return `${error.message}`
         }
     }
     static async stopLending() {
         try {
-            if (!lending.running) return `Its not running`
+            if (!lendJob.running) return `Its not running`
             lendJob.stop()
+            if(lendJob.running) return `Failed to stop lending job`
             let { error, data } = await spot.getLendingInfo()
             if (error) throw new Error(`Error on retrieving lending information`)
             stopAllLend(data)
