@@ -16,9 +16,9 @@ const rateCtrl = require('./src/controller/rate')
 const jobCtrl = require('./src/controller/cronJob')
 const balanceCtrl = require('./src/controller/balance')
 const logCtrl = require('./src/controller/logs')
-const localDB = require('./src/controller/localDB')
+const dbCtrl = require('./src/controller/db')
 const fileCtrl = require('./src/controller/file')
-const file = require(filePath)
+const database = require(filePath)
 const _ = require('lodash')
 
 //watch list scene
@@ -33,21 +33,21 @@ const watchHelp = `List of available commands:
 watchListScene.enter(ctx => ctx.reply(`Welcome to watch tower\n ${watchHelp}`))
 watchListScene.help((ctx) => ctx.reply(watchHelp))
 watchListScene.command('list', ctx => {
-    let message = `Last updated: ${new Date(file['lastUpdated'])} \n`;
-    file['db'].forEach(coin => {
+    let message = `Last updated: ${new Date(database['lastUpdated'])} \n`;
+    database['db'].forEach(coin => {
         message += `[${coin.id}] - ${coin.name} \n`
     })
     ctx.reply(message)
 })
 watchListScene.command('update', async ctx => {
-    const coinsJSON = await localDB.getLendingCoinDatabase()
-    fileCtrl.updateDB(coinsJSON)
+    const coins = await dbCtrl.getLendingDB()
+    fileCtrl.updateDB(coins)
     ctx.reply('Updated database')
 })
 watchListScene.command('current', ctx => {
     let list = ``
-    if (file.watchlist.length > 0) {
-        file.watchlist.forEach(coin => {
+    if (database.watchlist.length > 0) {
+        database.watchlist.forEach(coin => {
             list += `${coin}\n`
         })
     } else {
@@ -57,8 +57,8 @@ watchListScene.command('current', ctx => {
 })
 watchListScene.command('add', ctx => {
     const value = ctx.message.text.split(" ")
-    const coin = value[1].toUpperCase()
-    const message = fileCtrl.addtoWatchlist(coin)
+    const ticker = value[1].toUpperCase()
+    const message = fileCtrl.addtoWatchlist(ticker)
     ctx.reply(message)
 })
 watchListScene.command('remove', ctx => {
@@ -91,7 +91,7 @@ lendingScene.command('top10crypto', async ctx => {
     ctx.reply(msg)
 })
 lendingScene.command('watchlist', async ctx => {
-    const message = await rateCtrl.getRatesByWatchlist(file.watchlist)
+    const message = await rateCtrl.getRatesByWatchlist(database.watchlist)
     ctx.reply(message)
 })
 lendingScene.command('add', ctx => {
@@ -108,8 +108,8 @@ lendingScene.command('remove', ctx => {
 })
 lendingScene.command('list', ctx => {
     let list = ``
-    if (file.lending.length > 0) {
-        file.lending.forEach(coin => {
+    if (database.lending.length > 0) {
+        database.lending.forEach(coin => {
             list += `${coin}\n`
         })
     } else {
@@ -140,12 +140,12 @@ bot.command('displaylogs', ctx => displayLogs(ctx))
 bot.launch()
 
 async function startLending(ctx) {
-    const result = await jobCtrl.start()
+    const result = await jobCtrl.startLending()
     ctx.reply(result)
 }
 
 async function stopLending(ctx) {
-    const result = await jobCtrl.stop()
+    const result = await jobCtrl.stopLending()
     ctx.reply(result)
 }
 
@@ -159,7 +159,7 @@ function whois(ctx) {
     const coin = value[1]?.toUpperCase()
     let result = `Missing coin ticker symbol`
     if (coin) {
-        const doc = _.find(file.db, o => { return o.id === coin })
+        const doc = _.find(database.db, o => { return o.id === coin })
         result = (doc) ? doc.name : `${coin} does not exist in the database, please try to update in /watchlist`
     }
     ctx.reply(`${result}`)
