@@ -2,18 +2,21 @@
 const wallet = require('../ftx/wallet')
 const spotMargin = require('../ftx/spotMargin')
 
-class LocalDB {
-    static async getLendingCoinDatabase() {
+class DB {
+    /**
+     * Generate an array of FTX lending coins to store in local database
+     */
+    static async getLendingDB() {
         try {
             let rateRes = await spotMargin.getRates()
             let coinRes = await wallet.getCoins()
             if(rateRes.error || coinRes.error) return
-            let listOfRates = rateRes.data
-            let listOfCoins = coinRes.data
+            let rates = rateRes.data
+            let coins = coinRes.data
             let result = []
-            listOfRates.forEach(rate => {
-                let index = listOfCoins.findIndex(coin => coin['id'].match(rate['coin']))
-                let { id, name, tokenizedEquity = false } = listOfCoins[index]
+            rates.forEach(rate => {
+                let index = coins.findIndex(coin => coin['id'].match(rate['coin']))
+                let { id, name, tokenizedEquity = false } = coins[index]
                 result.push({id, name, tokenizedEquity})
             })
             return result
@@ -21,6 +24,6 @@ class LocalDB {
             
         }
     }
-}//end of LocalDB
+}//end of DB
 
-module.exports = LocalDB
+module.exports = DB
