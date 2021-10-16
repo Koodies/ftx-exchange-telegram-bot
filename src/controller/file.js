@@ -77,7 +77,7 @@ class File {
         db.logs = logs
         saveDB(db)
     }
-}//end of LocalDB
+}//end of File
 
 /**
  * Overwrite JSON object into database path
