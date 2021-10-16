@@ -86,7 +86,6 @@ class File {
 function saveDB(file) {
     fs.writeFile(filePath, JSON.stringify(file), (err) => {
         if (err) return console.log(err)
-        console.log(`Successfully saved database.json`)
     })
 }
 
