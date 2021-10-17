@@ -98,7 +98,7 @@ class File {
     static saveLendingLog(log) {
         let logs = db.lendLogs
         logs.push(log)
-        while (logs.length > 10) logs = logs.slice(1)
+        while (logs.length > 5) logs = logs.slice(1)
         db.lendLogs = logs
         saveDB(db)
     }
@@ -110,7 +110,7 @@ class File {
     static saveStakingLog(log) {
         let logs = db.stakeLogs
         logs.push(log)
-        while (logs.length > 10) logs = logs.slice(1)
+        while (logs.length > 5) logs = logs.slice(1)
         db.stakeLogs = logs
         saveDB(db)
     }

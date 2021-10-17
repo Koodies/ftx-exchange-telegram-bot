@@ -50,8 +50,9 @@ class CronJob {
     static async stopStaking() {
         try {
             stakeJob.stop()
+            return `Successfully stopped staking job`
         } catch (error) {
-            
+            return `${error.message}`
         }
     }
 }// end of CronJob
@@ -74,7 +75,8 @@ async function staking() {
     const balances = walletRes.data[account]
     let wantToStake = []
     stakingList.forEach(ticker => {
-        wantToStake.push(_.find(balances, balance => { return balance.coin === ticker }))
+        let stakeDoc = _.find(balances, balance => { return balance.coin === ticker })
+        if(stakeDoc) wantToStake.push(stakeDoc)
     })
     genStakeReqs(wantToStake).then(
         results => {
@@ -124,7 +126,7 @@ function genLendReqPromise(rate, balance, coin) {
 
 function genStakeReqPromise(balance) {
     return new Promise(async (resolve, reject) => {
-        const { coin, availableWithoutBorrow } = balance
+        const { coin, availableWithoutBorrow = 0 } = balance
         if (!coin || availableWithoutBorrow <= 0) resolve({ stake: false, coin, balance: availableWithoutBorrow, error: 'Missing coin or balance' })
         let stakeRes = await stake.sendStakeReq(coin, availableWithoutBorrow)
         if (stakeRes.error) resolve({ stake: false, coin, availableWithoutBorrow, error: stakeRes?.data })
