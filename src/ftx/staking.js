@@ -19,7 +19,8 @@ class Staking {
     static sendStakeReq(coin, size) {
         let timeStamp = +new Date
         let path = `srm_stakes/stakes`
-        let signature = ftx.generateSignature('POST', timeStamp, path, {coin, size})
+        let data = {coin, size}
+        let signature = ftx.generateSignature('POST', timeStamp, path, data)
         return ftx.sendPostReq(signature, timeStamp, path, data)
     }
 }// end of Staking
