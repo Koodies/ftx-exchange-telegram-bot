@@ -178,7 +178,7 @@ Issue a /back command to head back to the main menu
 ## Tip me a Cup of Coffee
 Use my referral [FTX Referral](https://ftx.com/#a=koodies4ever)
 
-<button onClick="window.open('https://ftx.us/pay/request?subscribe=false&id=1160&memoIsRequired=false&memo=&notes=&allowTip=true','_blank','resizable,width=700,height=900')">Tip me via FTX</button>
+[Tip me via FTX](https://ftx.us/pay/request?subscribe=false&id=1160&memoIsRequired=false&memo=&notes=&allowTip=true&fixedWidth=true)
 
 ## References
 [FTX API](https://docs.ftx.com/?python#rest-api)
