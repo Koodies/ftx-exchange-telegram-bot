@@ -24,20 +24,20 @@ const _ = require('lodash')
 updateDatabase()
 
 //Watchlist scene
-const watchListScene = new BaseScene('watchListScene')
+const watchingScene = new BaseScene('watchingScene')
 const watchHelp = `List of available commands:
 /list - List of coins available on FTX
 /show - Display current watchlist
 /add <coin> - Add coin to your watchlist
 /remove <coin> - Remove coin from your watchlist
 /back - Return to main menu\n`
-watchListScene.enter(ctx => ctx.reply(`Welcome to watch tower\n ${watchHelp}`))
-watchListScene.help((ctx) => ctx.reply(watchHelp))
-watchListScene.command('list', ctx => {
+watchingScene.enter(ctx => ctx.reply(`Welcome to watch tower\n ${watchHelp}`))
+watchingScene.help((ctx) => ctx.reply(watchHelp))
+watchingScene.command('list', ctx => {
     const msg = displayCoinList()
     ctx.reply(msg)
 })
-watchListScene.command('show', ctx => {
+watchingScene.command('show', ctx => {
     let list = ``
     if (database.watching.length > 0) {
         database.watching.forEach(coin => {
@@ -48,18 +48,18 @@ watchListScene.command('show', ctx => {
     }
     ctx.reply(list)
 })
-watchListScene.command('add', ctx => {
+watchingScene.command('add', ctx => {
     const ticker = getTicker(ctx.message.text)
     const message = fileCtrl.addtoWatchlist(ticker)
     ctx.reply(message)
 })
-watchListScene.command('remove', ctx => {
+watchingScene.command('remove', ctx => {
     const ticker = getTicker(ctx.message.text)
     const message = fileCtrl.rmFromWatchlist(ticker)
     ctx.reply(message)
 })
-watchListScene.command('back', ctx => { return ctx.scene.leave() })
-watchListScene.leave()
+watchingScene.command('back', ctx => { return ctx.scene.leave() })
+watchingScene.leave()
 
 //Lending scene
 const lendingScene = new BaseScene('lendingScene')
@@ -114,14 +114,54 @@ lendingScene.command('show', ctx => {
 lendingScene.command('back', ctx => { return ctx.scene.leave() })
 lendingScene.leave()
 
+//Staking Scene
+
+const stakingScene = new BaseScene('stakingScene')
+const stakingHelp = `List of available commands:
+/list - List of coins available for staking on FTX
+/add <coin> - Add coin to your lending list
+/remove <coin> - Remove coin from your lending list
+/show - Display current staking list
+/back - Return to main menu\n`
+stakingScene.enter(ctx => ctx.reply(`Welcome to staking\n ${stakingHelp}`))
+stakingScene.help(ctx => ctx.reply(stakingHelp))
+stakingScene.command('list', ctx => {
+    const msg = displayStakeList()
+    ctx.reply(msg)
+})
+stakingScene.command('add', ctx => {
+    const ticker = getTicker(ctx.message.text)
+    const msg = fileCtrl.addToStakingList(ticker)
+    ctx.reply(msg)
+})
+stakingScene.command('remove', ctx => {
+    const ticker = getTicker(ctx.message.text)
+    const msg = fileCtrl.rmFromStakingList(ticker)
+    ctx.reply(msg)
+})
+stakingScene.command('show', ctx => {
+    let list = ``
+    if (database.staking.length > 0) {
+        database.staking.forEach(coin => {
+            list += `${coin}\n`
+        })
+    } else {
+        list = `Staking list is empty, Please use\n/add <coin> to add into your staking list`
+    }
+    ctx.reply(list)
+})
+stakingScene.command('back', ctx => { return ctx.scene.leave() })
+stakingScene.leave()
+
 //Initiate Telegram Bot
-const stage = new Stage([watchListScene, lendingScene])
+const stage = new Stage([watchingScene, lendingScene, stakingScene])
 const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.use(session())
 bot.use(stage.middleware())
 bot.help((ctx) => getHelp(ctx))
 bot.start((ctx) => getHelp(ctx))
 bot.command('startlend', ctx => startLending(ctx))
+bot.command('startstake', ctx => startStaking(ctx))
 bot.command('balance', async ctx => {
     let msg = await balanceCtrl.getBalance()
     ctx.reply(msg)
@@ -133,8 +173,10 @@ bot.command('update', async ctx => {
 })
 bot.command('watch', ctx => ctx.scene.enter('watchListScene'))
 bot.command('lend', ctx => ctx.scene.enter('lendingScene'))
+bot.command('stake', ctx => ctx.scene.enter('stakingScene'))
 bot.command('whois', ctx => whois(ctx))
 bot.command('stoplend', ctx => stopLending(ctx))
+bot.command('stopstake', ctx => stopStaking(ctx))
 bot.command('displaylogs', ctx => displayLogs(ctx))
 bot.launch()
 
@@ -143,8 +185,18 @@ async function startLending(ctx) {
     ctx.reply(result)
 }
 
+async function startStaking(ctx) {
+    const result = await jobCtrl.startStaking()
+    ctx.reply(result)
+}
+
 async function stopLending(ctx) {
     const result = await jobCtrl.stopLending()
+    ctx.reply(result)
+}
+
+async function stopStaking(ctx) {
+    const result = await jobCtrl.stopStaking()
     ctx.reply(result)
 }
 
@@ -170,8 +222,19 @@ function displayCoinList() {
     return list
 }
 
+function displayStakeList() {
+    let list = `Last updated: ${new Date(database['lastUpdated'])} \n`;
+    database['coins']['stake'].forEach(coin => {
+        list += `${coin} \n`
+    })
+    return list
+}
+
 async function displayLogs(ctx) {
-    const result = logCtrl.getLendingLogs()
+    let result = `--------------- Lending ---------------\n`
+    result += logCtrl.getLendingLogs()
+    result += `--------------- Staking ---------------\n`
+    result += logCtrl.getStakingLogs()
     ctx.reply(result)
 }
 
@@ -195,11 +258,14 @@ function getHelp(ctx) {
     const help = `List of commands:
 /watch - Enter watchlist scene
 /lend - Enter lending scene
+/stake - Enter staking scene
 /update - Update database
 /balance - Check your current FTX account balance
 /whois <coin> - Check the full name of the coin
-/startlend - Start auto-compounding
-/stoplend - Stop lending
+/startlend - Start lending auto-compounding
+/startstake - Start staking auto-compounding
+/stoplend - Stop lending job & remove all lending offer
+/stopstake - Stop staking job
 /displaylogs - Display Lending Logs`
     ctx.reply(help)
 }
