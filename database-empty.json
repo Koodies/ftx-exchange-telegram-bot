@@ -1,6 +1,12 @@
 {
-    "watchlist": [],
-    "logs": [],
+    "watching": [],
     "lending": [],
-    "db": []
+    "staking": [],
+    "lendLogs": [],
+    "stakeLogs": [],
+    "coins": {
+        "stake": [],
+        "lend": [],
+        "lastUpdated": null
+    }
 }
