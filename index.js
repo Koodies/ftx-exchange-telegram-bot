@@ -171,7 +171,7 @@ bot.command('update', async ctx => {
     updateDatabase()
     ctx.reply('Updated database')
 })
-bot.command('watch', ctx => ctx.scene.enter('watchListScene'))
+bot.command('watch', ctx => ctx.scene.enter('watchingScene'))
 bot.command('lend', ctx => ctx.scene.enter('lendingScene'))
 bot.command('stake', ctx => ctx.scene.enter('stakingScene'))
 bot.command('whois', ctx => whois(ctx))
