@@ -30,7 +30,7 @@ function genLendLogMsg(logs) {
         if(lendOut) {
             msg += `Success - [${coin}] balance: ${balance}\n`
         } else {
-            msg += `Error - [${coin}] balance: ${balance} | ${error}, NotFound: ${exist} , Wallet: ${inWallet}\n`
+            msg += `Error - [${coin}] balance: ${balance} | ${error}\n`
         }
     })
     return msg
@@ -39,9 +39,11 @@ function genLendLogMsg(logs) {
 function genStakeLogMsg(logs) {
     let msg = `-------------------------------------------\nTime: ${new Date(logs['timestamp']).toLocaleString()}\n`
     logs['stake'].forEach(log => {
-        const { stake, coin, availableWithoutBorrow } = log
+        const { stake, coin, availableWithoutBorrow, error } = log
         if(stake) {
             msg += `Success - [${coin}] balance: ${availableWithoutBorrow}\n`
+        } else {
+            msg += `Error - [${coin}] | ${error}\n`
         }
     })
     return msg
