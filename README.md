@@ -1,5 +1,5 @@
 # FTX-Telegram Bot ReadMe
-A readme on how to set up FTX-Telegram hourly autolending bot.
+A readme on how to set up and use FTX-Telegram hourly auto compounding lending & staking bot.
 
 # Table of contents
 - [FTX-Telegram Bot ReadMe](#ftx-telegram-bot-readme)
@@ -7,34 +7,44 @@ A readme on how to set up FTX-Telegram hourly autolending bot.
 - [Setup](#setup)
   - [Environment Required](#environment-required)
   - [Setting up on AWS [Coming Soon]](#setting-up-on-aws-coming-soon)
-  - [Create these files on the main folder](#create-these-files-on-the-main-folder)
+  - [Create this file on the main folder](#create-this-file-on-the-main-folder)
   - [Create a telegram bot](#create-a-telegram-bot)
   - [Create a FTX API & enable spot margin trading](#create-a-ftx-api--enable-spot-margin-trading)
   - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
     - [watchlist](#watchlist)
-    - [lending - Global](#lending---global)
-    - [balance - Global](#balance---global)
-    - [whois - Global](#whois---global)
-    - [startlend - Global](#startlend---global)
-    - [stoplend - Global](#stoplend---global)
-    - [displaylogs - Global](#displaylogs---global)
+    - [lending](#lending)
+    - [staking](#staking)
+    - [update](#update)
+    - [balance](#balance)
+    - [whois](#whois)
+    - [startlend](#startlend)
+    - [startstake](#startstake)
+    - [stoplend](#stoplend)
+    - [stopstake](#stopstake)
+    - [displaylogs](#displaylogs)
   - [Watchlist](#watchlist-1)
     - [list](#list)
-    - [update](#update)
-    - [current](#current)
+    - [show](#show)
     - [add [coin]](#add-coin)
     - [remove [coin]](#remove-coin)
     - [back](#back)
-  - [Lending](#lending)
+  - [Lending](#lending-1)
+    - [list](#list-1)
     - [top10](#top10)
     - [top10cryto](#top10cryto)
     - [watchlist](#watchlist-2)
     - [add [coin]](#add-coin-1)
     - [remove [coin]](#remove-coin-1)
-    - [list](#list-1)
+    - [show](#show-1)
     - [back](#back-1)
+  - [Staking](#staking-1)
+    - [list](#list-2)
+    - [add [coin]](#add-coin-2)
+    - [remove [coin]](#remove-coin-2)
+    - [show](#show-2)
+    - [back](#back-2)
 - [Troubleshooting](#troubleshooting)
 - [Others](#others)
   - [Authors](#authors)
@@ -49,7 +59,7 @@ A readme on how to set up FTX-Telegram hourly autolending bot.
 
 ## Setting up on AWS [Coming Soon]
 
-## Create these files on the main folder
+## Create this file on the main folder
 .env
 ```
 BOT_TOKEN = 'telegram-bot-token-here'
@@ -86,67 +96,73 @@ FTX_SUB = 'ftx-sub-account-here' #Optional
 
 ## Main
 [(Back to top)](#table-of-contents)
+
+All commands under main are global commands
 ### watchlist
-Issue a /watchlist command to enter the watch list scene.
-
-### lending - Global
-Issue a /lending command to enter the lending scene.
-
-### balance - Global
+Issue a /watch command to enter the watch list scene.
+### lending
+Issue a /lend command to enter the lending scene.
+### staking
+Issue a /stake command to enter the lending scene.
+### update
+Issue a /update command to update the local database of coins
+### balance
 Issue a /balance command to view your current balance in your FTX account.
-
-### whois - Global
+### whois
 Issue a /whois command with a ticker symbol of the coin to get the full name of the coin.
-
-### startlend - Global
-Issue a /start command to start the hourly lending cron job.
-
-### stoplend - Global
-Issue a /stop command to stop the hourly lending cron job and remove all funds from the lending pool.
-
-### displaylogs - Global
+### startlend 
+Issue a /startlend command to start the hourly lending cron job.
+### startstake
+Issue a /startstake command to start the hourly staking cron job.
+### stoplend
+Issue a /stoplend command to stop the hourly lending cron job and remove all funds from the lending pool.
+### stopstake
+Issue a /stopstake command to stop the hourly staking cron job.
+### displaylogs
 Issue a /displaylogs command to display last 10 logs.
 
 ## Watchlist
 [(Back to top)](#table-of-contents)
 ### list
 Issue a /list command to list all the coins available for lending on FTX
-
-### update
-Issue a /update command to update the local database of coins
-
-### current
-Issue a /current command to display current watchlist saved locally
-
+### show
+Issue a /show command to display current watchlist saved locally
 ### add [coin]
 Issue a /add USD command to add coin to your watchlist
-
 ### remove [coin]
 Issue a /remove USD command to remove coin from your watchlist
-
 ### back
 Issue a /back command to head back to the main menu
 
 ## Lending
 [(Back to top)](#table-of-contents)
+### list
+Issue a /list command to list all the coins available for lending on FTX
 ### top10
 Issue a /top10 command to retrieve the first 10 highest rate coins inclusive of tokenize stocks
-
 ### top10cryto
 Issue a /top10crypto command to retrieve the first 10 highest rates crypto coins
-
 ### watchlist
 Issue a /watchlist command to retrieve all the rates of the coins under watchlist
-
 ### add [coin]
 Issue a /add USD command to add USD into the lending list
-
 ### remove [coin]
 Issue a /remove USD command to remove USD from the lending list
+### show
+Isse a /show to display current lending list
+### back
+Issue a /back command to head back to the main menu
 
+## Staking
+[(Back to top)](#table-of-contents)
 ### list
-Isse a /list to display current lending list
-
+Issue a /list command to list the coins available for staking on FTX
+### add [coin]
+Issue a /add USD command to add USD into the staking list
+### remove [coin]
+Issue a /remove USD command to remove USD from the staking list
+### show
+Isse a /show to display current staking list
 ### back
 Issue a /back command to head back to the main menu
 
@@ -160,7 +176,9 @@ Issue a /back command to head back to the main menu
 [Koodies](https://github.com/koodies)
 
 ## Tip me a Cup of Coffee
-[FTX Referral](https://ftx.com/#a=koodies4ever)
+Use my referral [FTX Referral](https://ftx.com/#a=koodies4ever)
+
+<button onClick="window.open('https://ftx.us/pay/request?subscribe=false&id=1160&memoIsRequired=false&memo=&notes=&allowTip=true','_blank','resizable,width=700,height=900')">Tip me via FTX</button>
 
 ## References
 [FTX API](https://docs.ftx.com/?python#rest-api)

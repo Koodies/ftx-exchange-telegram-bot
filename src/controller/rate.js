@@ -3,7 +3,7 @@ require('dotenv').config()
 var _ = require('lodash')
 const spotMargin = require('../ftx/spotMargin')
 const filePath = "../../database.json"
-const file = require(filePath)
+const database = require(filePath)
 
 class Rate {
     /**
@@ -32,7 +32,7 @@ class Rate {
             const arrayOfRates = res.data
             let arrayOfCryptoRates = []
             arrayOfRates.forEach(rate => {
-                let doc = _.find(file.db, o => { return o.id === rate.coin })
+                let doc = _.find(database.coins.lend, o => { return o.id === rate.coin })
                 if (!doc || doc['tokenizedEquity']) return
                 arrayOfCryptoRates.push(rate)
             })
