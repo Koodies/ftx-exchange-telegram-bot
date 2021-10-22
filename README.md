@@ -6,10 +6,13 @@ A readme on how to set up and use FTX-Telegram hourly auto compounding lending &
 - [Table of contents](#table-of-contents)
 - [Setup](#setup)
   - [Environment Required](#environment-required)
-  - [Setting up on AWS [Coming Soon]](#setting-up-on-aws-coming-soon)
-  - [Create this file on the main folder](#create-this-file-on-the-main-folder)
   - [Create a telegram bot](#create-a-telegram-bot)
   - [Create a FTX API & enable spot margin trading](#create-a-ftx-api--enable-spot-margin-trading)
+  - [Environment Variables](#environment-variables)
+  - [Setting up](#setting-up)
+    - [Setting up with docker](#setting-up-with-docker)
+    - [Setting up with nodejs](#setting-up-with-nodejs)
+    - [Setting up on AWS [Coming Soon]](#setting-up-on-aws-coming-soon)
   - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
@@ -55,18 +58,7 @@ A readme on how to set up and use FTX-Telegram hourly auto compounding lending &
 [(Back to top)](#table-of-contents)
 
 ## Environment Required
-* NodeJS
-
-## Setting up on AWS [Coming Soon]
-
-## Create this file on the main folder
-.env
-```
-BOT_TOKEN = 'telegram-bot-token-here'
-FTX_KEY = 'ftx-api-key-here'
-FTX_SECRET = 'ftx-api-secret-here'
-FTX_SUB = 'ftx-sub-account-here' #Optional
-```
+* A machine with nodejs or docker installed
 
 ## Create a telegram bot
 1. Chat with [BotFather](https://core.telegram.org/bots#6-botfather)
@@ -84,12 +76,34 @@ FTX_SUB = 'ftx-sub-account-here' #Optional
 
 *(Optional) - Create a sub account and specific it on the .env will allow you to segregate your lending. 
 
+## Environment Variables
+.env to be place in the same location as index.js
+```
+BOT_TOKEN=telegram-bot-token-here
+FTX_KEY=ftx-api-key-here
+FTX_SECRET=ftx-api-secret-here
+FTX_SUB=ftx-sub-account-here        #Optional
+```
+## Setting up
+### Setting up with docker
+```
+docker pull koodies/ftx-exchange-telegram-bot:1.1.0
+docker run --env-file .env -d koodies/ftx-exchange-telegram-bot:1.1.0
+```
+Additional help: [Set up docker on windows](https://docs.docker.com/desktop/windows/install/)
+
+### Setting up with nodejs
+
+Additional help: [Setting up nodejs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
+### Setting up on AWS [Coming Soon]
+
+
 ## Ready to spin
 1. Start a chat with your bot, link to the chat can be found on bot creation with BotFather
-2. Enter /watchlist
-3. Enter /update to update the database
-4. Proceed with lending via adding your coins on the lending menu
-
+2. Enter /lend to start populating your lending list
+3. Enter /stake to start populating your staking list
+4. Run /startlend or /startstake to start compounding!
 
 # Menu
 [(Back to top)](#table-of-contents)
