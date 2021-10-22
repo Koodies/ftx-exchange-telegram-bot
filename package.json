@@ -1,11 +1,11 @@
 {
   "name": "ftx-auto-lending-tele",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A program to init lending at every hour via telegram bot commands",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js --ignore database.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "nodemon index.js --ignore database.json"
   },
   "author": "Koodies Tan Ke Wei",
   "license": "MIT",
