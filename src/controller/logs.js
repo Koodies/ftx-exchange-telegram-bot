@@ -24,24 +24,24 @@ class Logs {
 }//end of Logs
 
 function genLendLogMsg(logs) {
-    let msg = `-------------------------------------------\nTime: ${new Date(logs['timestamp']).toLocaleString()}\n`
+    let msg = `-------------------------------------\nTime: ${new Date(logs['timestamp']).toLocaleString()}\n`
     logs['lend'].forEach(log => {
-        const { lendOut, coin, exist, inWallet, balance, error } = log
+        const { lendOut, coin, balance, error } = log
         if(lendOut) {
-            msg += `Success - [${coin}] balance: ${balance}\n`
+            msg += `Success - [${coin}] size: ${balance}\n`
         } else {
-            msg += `Error - [${coin}] balance: ${balance} | ${error}\n`
+            msg += `Error - [${coin}] size: ${balance} | ${error}\n`
         }
     })
     return msg
 }
 
 function genStakeLogMsg(logs) {
-    let msg = `-------------------------------------------\nTime: ${new Date(logs['timestamp']).toLocaleString()}\n`
+    let msg = `-------------------------------------\nTime: ${new Date(logs['timestamp']).toLocaleString()}\n`
     logs['stake'].forEach(log => {
         const { stake, coin, availableWithoutBorrow, error } = log
         if(stake) {
-            msg += `Success - [${coin}] balance: ${availableWithoutBorrow}\n`
+            msg += `Success - [${coin}] size: ${availableWithoutBorrow}\n`
         } else {
             msg += `Error - [${coin}] | ${error}\n`
         }
