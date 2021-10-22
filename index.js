@@ -168,7 +168,7 @@ bot.command('balance', async ctx => {
 })
 bot.command('update', async ctx => {
     ctx.reply('Updating database')
-    updateDatabase()
+    await updateDatabase()
     ctx.reply('Updated database')
 })
 bot.command('watch', ctx => ctx.scene.enter('watchingScene'))
@@ -215,7 +215,7 @@ async function updateDatabase() {
 }
 
 function displayCoinList() {
-    let list = `Last updated: ${new Date(database['lastUpdated'])} \n`;
+    let list = `Last updated: ${new Date(database['coins']['lastUpdated']).toLocaleString()} \n`;
     database['coins']['lend'].forEach(coin => {
         list += `[${coin.id}] - ${coin.name} \n`
     })
@@ -223,7 +223,7 @@ function displayCoinList() {
 }
 
 function displayStakeList() {
-    let list = `Last updated: ${new Date(database['lastUpdated'])} \n`;
+    let list = `Last updated: ${new Date(database['coins']['lastUpdated']).toLocaleString()} \n`;
     database['coins']['stake'].forEach(coin => {
         list += `${coin} \n`
     })
@@ -231,9 +231,9 @@ function displayStakeList() {
 }
 
 async function displayLogs(ctx) {
-    let result = `--------------- Lending ---------------\n`
+    let result = `------------ Lending ------------\n`
     result += logCtrl.getLendingLogs()
-    result += `--------------- Staking ---------------\n`
+    result += `------------ Staking ------------\n`
     result += logCtrl.getStakingLogs()
     ctx.reply(result)
 }
