@@ -120,3 +120,7 @@ dist
 # Others
 *.sh
 database.json
+
+# Docker
+.dockerignore
+Dockerfile
