@@ -1,69 +1,148 @@
 'use strict'
 const fs = require('fs')
 const filePath = `${__dirname}/../../database.json`
-const file = require(filePath)
+const db = require(filePath)
 const _ = require('lodash')
 
 class File {
-    static addtoWatchlist(coin) {
-        if(!this.doesCoinExistInFile(coin)) return `${coin} is not found in database`
-        const index = file.watchlist.indexOf(coin)
-        if (index !== -1) return `${coin} is already on watchlist`
-        file.watchlist.push(coin)
-        saveDB(file)
-        return `Added ${coin} into watchlist`
+    /**
+     * Add ticker to watchlist key on database.json
+     * @param  {String} ticker  Coin Ticker Symbol
+     */
+    static addtoWatchlist(ticker) {
+        if (!doesTickerExist(ticker)) return `${ticker} is not found in database`
+        const index = db.watching.indexOf(ticker)
+        if (index !== -1) return `${ticker} is already on watchlist`
+        db.watching.push(ticker)
+        saveDB(db)
+        return `Added ${ticker} into watchlist`
     }
 
-    static addToLendingList(coin) {
-        if(!this.doesCoinExistInFile(coin)) return `${coin} is not found in database`
-        const index = file.lending.indexOf(coin)
-        if(index !== -1) return `${coin} is already on lending list`
-        file.lending.push(coin)
-        saveDB(file)
-        return `Added ${coin} into lending list`
+    /**
+     * Add ticker to lending key on database.json
+     * @param  {String} ticker    Coin Ticker Symbol
+     */
+    static addToLendingList(ticker) {
+        if (!doesTickerExist(ticker)) return `${ticker} is not found in database`
+        const index = db.lending.indexOf(ticker)
+        if (index !== -1) return `${ticker} is already on lending list`
+        db.lending.push(ticker)
+        saveDB(db)
+        return `Added ${ticker} into lending list`
     }
 
-    static rmFromWatchlist(coin) {
-        const index = file.watchlist.indexOf(coin)
-        if (index === -1) return `${coin} is not in the watchlist`
-        file.watchlist.splice(index, 1)
-        saveDB(file)
-        return `Removed ${coin} from watchlist`
+    /**
+ * Add ticker to lending key on database.json
+ * @param  {String} ticker    Coin Ticker Symbol
+ */
+    static addToStakingList(ticker) {
+        if (!doesStakeExist(ticker)) return `${ticker} is not found in database`
+        const index = db.staking.indexOf(ticker)
+        if (index !== -1) return `${ticker} is already on lending list`
+        db.staking.push(ticker)
+        saveDB(db)
+        return `Added ${ticker} into staking list`
     }
 
-    static rmFromLendinglist(coin) {
-        const index = file.lending.indexOf(coin)
-        if (index === -1) return `${coin} is not in the lending list`
-        file.lending.splice(index, 1)
-        saveDB(file)
-        return `Removed ${coin} from lending list`
+    /**
+     * Remove ticker from watchlist key on database.json
+     * @param  {String} ticker  Coin Ticker Symbol
+     */
+    static rmFromWatchlist(ticker) {
+        const index = db.watching.indexOf(ticker)
+        if (index === -1) return `${ticker} is not in the watchlist`
+        db.watching.splice(index, 1)
+        saveDB(db)
+        return `Removed ${ticker} from watchlist`
     }
 
-    static updateDB(coinsJSON) {
-        file['db'] = coinsJSON
-        file['lastUpdated'] = Date.now()
-        saveDB(file)
+    /**
+     * Remove ticker from lending key on database.json
+     * @param  {String} ticker  Coin Ticker Symbol
+     */
+    static rmFromLendinglist(ticker) {
+        const index = db.lending.indexOf(ticker)
+        if (index === -1) return `${ticker} is not in the lending list`
+        db.lending.splice(index, 1)
+        saveDB(db)
+        return `Removed ${ticker} from lending list`
     }
 
-    static saveLogs(newLog) {
-        let logs = file.logs
-        logs.push(newLog)
-        while(logs.length > 10) logs = logs.slice(1)
-        file.logs = logs
-        saveDB(file)
+    /**
+     * Remove ticker from staking key on database.json
+     * @param  {String} ticker  Coin Ticker Symbol
+     */
+    static rmFromStakingList(ticker) {
+        const index = db.staking.indexOf(ticker)
+        if (index === -1) return `${ticker} is not in the staking list`
+        db.staking.splice(index, 1)
+        saveDB(db)
+        return `Removed ${ticker} from staking list`
     }
 
-    static doesCoinExistInFile(coin) {
-        const doc = _.find(file.db, o => { return o.id === coin })
-        return (!!doc)
-    } 
-}//end of LocalDB
+    /**
+     * @param  {Array} lendDocs=[]
+     * @param  {Array} stakeDocs=[]
+     */
+    static updateDB(lendDocs = [], stakeDocs = []) {
+        db.coins['lend'] = lendDocs
+        db.coins['stake'] = stakeDocs
+        db.coins['lastUpdated'] = Date.now()
+        saveDB(db)
+    }
 
-function saveDB(newFile) {
-    fs.writeFile(filePath, JSON.stringify(newFile), (err) => {
+    /**
+     * Add lending cron job log into database.json
+     * @param  {Object} log
+     */
+    static saveLendingLog(log) {
+        let logs = db.lendLogs
+        logs.push(log)
+        while (logs.length > 5) logs = logs.slice(1)
+        db.lendLogs = logs
+        saveDB(db)
+    }
+
+    /**
+     * Add staking cron job log into database.json
+     * @param  {Object} log
+     */
+    static saveStakingLog(log) {
+        let logs = db.stakeLogs
+        logs.push(log)
+        while (logs.length > 5) logs = logs.slice(1)
+        db.stakeLogs = logs
+        saveDB(db)
+    }
+}//end of File
+
+/**
+ * Overwrite JSON object into database path
+ * @param  {Object} file
+ */
+function saveDB(file) {
+    fs.writeFile(filePath, JSON.stringify(file), (err) => {
         if (err) return console.log(err)
-        console.log(`Successfully saved database.json`)
     })
+}
+
+/**
+ * Validate if lending ticker exist on database.json
+ * @param  {String} ticker
+ */
+function doesTickerExist(ticker) {
+    const coins = db.coins.lend
+    const doc = _.find(coins, coin => { return coin.id === ticker })
+    return (!!doc)
+}
+
+/**
+ * Validate if stake ticker exist on database.json
+ * @param  {String} ticker
+ */
+function doesStakeExist(ticker) {
+    const coins = db.coins.stake
+    return coins.includes(ticker)
 }
 
 module.exports = File

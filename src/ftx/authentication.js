@@ -24,7 +24,7 @@ class Authentication {
         path = `/api/${path}`
         let payload = ''
         if (method === 'GET' && data) {
-            path += '?' + querystring.stringify(data);
+            path += '?' + URLSearchParams.stringify(data);
         } else if (method === 'DELETE' && typeof data === 'number') {
             path += data;
         } else if (data) {
