@@ -1,6 +1,6 @@
 {
   "name": "ftx-auto-lending-tele",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A telegram bot to compound lending & staking at every hour on FTX exchange with a switch to start/stop and view high lending rates for supported coins without the need to search high & low with the unintuitive table on the FTX Pro mobile app",
   "main": "index.js",
   "scripts": {
