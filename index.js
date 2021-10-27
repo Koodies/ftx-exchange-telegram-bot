@@ -245,11 +245,11 @@ function getTicker(text) {
 
 function whois(ctx) {
     const value = ctx.message.text.split(" ")
-    const coin = value[1]?.toUpperCase()
-    let result = `Missing coin ticker symbol`
-    if (coin) {
-        const doc = _.find(database.db, o => { return o.id === coin })
-        result = (doc) ? doc.name : `${coin} does not exist in the database, please try to update in /watchlist`
+    const ticker = value[1]?.toUpperCase()
+    let result = `Missing coin ticker`
+    if (ticker) {
+        const doc = _.find(database.coins["lend"], coin => { return coin.id === ticker })
+        result = (doc) ? doc.name : `${ticker} does not exist in the database, please try to update in /watchlist`
     }
     ctx.reply(`${result}`)
 }
