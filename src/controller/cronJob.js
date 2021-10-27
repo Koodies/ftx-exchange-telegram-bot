@@ -8,7 +8,7 @@ const filePath = "../../database.json"
 const database = require(filePath)
 const account = (process.env.FTX_SUB) ? process.env.FTX_SUB : "main"
 var lendJob = new Cronjob('0 50 * * * *', lending, null, false, 'America/Los_Angeles')
-var stakeJob = new Cronjob('0 50 * * * *', staking, null, false, 'America/Los_Angeles')
+var stakeJob = new Cronjob('0 55 * * * *', staking, null, false, 'America/Los_Angeles')
 
 class CronJob {
     static async startLending() {
