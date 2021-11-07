@@ -16,38 +16,9 @@ A readme on how to set up and use FTX-Telegram hourly auto compounding lending &
   - [Ready to spin](#ready-to-spin)
 - [Menu](#menu)
   - [Main](#main)
-    - [watchlist](#watchlist)
-    - [lending](#lending)
-    - [staking](#staking)
-    - [update](#update)
-    - [balance](#balance)
-    - [whois](#whois)
-    - [startlend](#startlend)
-    - [startstake](#startstake)
-    - [stoplend](#stoplend)
-    - [stopstake](#stopstake)
-    - [displaylogs](#displaylogs)
-  - [Watchlist](#watchlist-1)
-    - [list](#list)
-    - [show](#show)
-    - [add [coin]](#add-coin)
-    - [remove [coin]](#remove-coin)
-    - [back](#back)
-  - [Lending](#lending-1)
-    - [list](#list-1)
-    - [top10](#top10)
-    - [top10cryto](#top10cryto)
-    - [watchlist](#watchlist-2)
-    - [add [coin]](#add-coin-1)
-    - [remove [coin]](#remove-coin-1)
-    - [show](#show-1)
-    - [back](#back-1)
-  - [Staking](#staking-1)
-    - [list](#list-2)
-    - [add [coin]](#add-coin-2)
-    - [remove [coin]](#remove-coin-2)
-    - [show](#show-2)
-    - [back](#back-2)
+  - [Watchlist](#watchlist)
+  - [Lending](#lending)
+  - [Staking](#staking)
 - [Troubleshooting](#troubleshooting)
 - [Others](#others)
   - [Authors](#authors)
@@ -110,75 +81,53 @@ Additional help: [Setting up nodejs](https://docs.npmjs.com/downloading-and-inst
 
 ## Main
 [(Back to top)](#table-of-contents)
-
 All commands under main are global commands
-### watchlist
-Issue a /watch command to enter the watch list scene.
-### lending
-Issue a /lend command to enter the lending scene.
-### staking
-Issue a /stake command to enter the lending scene.
-### update
-Issue a /update command to update the local database of coins
-### balance
-Issue a /balance command to view your current balance in your FTX account.
-### whois
-Issue a /whois command with a ticker symbol of the coin to get the full name of the coin.
-### startlend 
-Issue a /startlend command to start the hourly lending cron job.
-### startstake
-Issue a /startstake command to start the hourly staking cron job.
-### stoplend
-Issue a /stoplend command to stop the hourly lending cron job and remove all funds from the lending pool.
-### stopstake
-Issue a /stopstake command to stop the hourly staking cron job.
-### displaylogs
-Issue a /displaylogs command to display last 10 logs.
+| Command | Description |
+| ----------- | ----------- |
+| /watch  | Enter the watch list scene |
+| /lend | Enter the lending scene. |
+| /stake | Enter the staking scene. |
+| /update | Update the local database of coins |
+| /balance | View your current balance in your FTX account. |
+| /whois | Query the full name of the coin. |
+| /startlend | Start the hourly lending cron job |
+| /startstake | Start the hourly staking cron job |
+| /stoplend | Stop the hourly lending cron job and remove all funds from the lending pool |
+| /stopstake | Stop the hourly staking cron job |
+| /dispalylogs | Display last 5 logs |
 
 ## Watchlist
 [(Back to top)](#table-of-contents)
-### list
-Issue a /list command to list all the coins available for lending on FTX
-### show
-Issue a /show command to display current watchlist saved locally
-### add [coin]
-Issue a /add USD command to add coin to your watchlist
-### remove [coin]
-Issue a /remove USD command to remove coin from your watchlist
-### back
-Issue a /back command to head back to the main menu
+| Command | Description |
+| ----------- | ----------- |
+| /list | list all the coins available for lending on FTX |
+| /show | Display current watchlist saved locally |
+| /add [ticker] | Issue a <code>/add USD</code> command to add coin to your watchlist |
+| /remove [ticker] | Issue a <code>/remove USD</code> command to remove coin from your watchlist |
+| /back | Head back to the main menu |
 
 ## Lending
 [(Back to top)](#table-of-contents)
-### list
-Issue a /list command to list all the coins available for lending on FTX
-### top10
-Issue a /top10 command to retrieve the first 10 highest rate coins inclusive of tokenize stocks
-### top10cryto
-Issue a /top10crypto command to retrieve the first 10 highest rates crypto coins
-### watchlist
-Issue a /watchlist command to retrieve all the rates of the coins under watchlist
-### add [coin]
-Issue a /add USD command to add USD into the lending list
-### remove [coin]
-Issue a /remove USD command to remove USD from the lending list
-### show
-Isse a /show to display current lending list
-### back
-Issue a /back command to head back to the main menu
+| Command | Description |
+| ----------- | ----------- |
+| /list | List all the coins available for lending on FTX |
+| /top10 | List the first 10 highest rate coins inclusive of tokenize stocks |
+| /top10crypto | List the first 10 highest rates crypto coins |
+| /watchlist | List all the rates of the coins under your watchlist |
+| /add [ticker] | Issue a <code>/add USD</code> command to add USD into the lending list |
+| /remove [ticker] | Issue a <code>/remove USD</code> command to remove USD from the lending list |
+| /show | Display current staking list |
+| /back | Head back to the main menu |
 
 ## Staking
 [(Back to top)](#table-of-contents)
-### list
-Issue a /list command to list the coins available for staking on FTX
-### add [coin]
-Issue a /add USD command to add USD into the staking list
-### remove [coin]
-Issue a /remove USD command to remove USD from the staking list
-### show
-Isse a /show to display current staking list
-### back
-Issue a /back command to head back to the main menu
+| Command | Description |
+| ----------- | ----------- |
+| /list | Issue a /list command to list the coins available for staking on FTX |
+| /add [ticker] | Issue a <code>/add USD</code> command to add USD into the staking list |
+| /remove [ticker] | Issue a <code>/remove USD</code> command to remove USD from the staking list |
+| /show | Display current staking list |
+| /back | Head back to the main menu |
 
 # Troubleshooting
 [(Back to top)](#table-of-contents)
@@ -191,7 +140,6 @@ Issue a /back command to head back to the main menu
 
 ## Tip me a Cup of Coffee
 Use my referral [FTX Referral](https://ftx.com/#a=koodies4ever)
-
 [Tip me via FTX](https://ftx.us/pay/request?subscribe=false&id=1160&memoIsRequired=false&memo=&notes=&allowTip=true&fixedWidth=true)
 
 ## References
