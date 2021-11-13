@@ -58,8 +58,8 @@ FTX_SUB=ftx-sub-account-here        #Optional
 ## Setting up
 ### Setting up with docker
 ```
-docker pull koodies/ftx-exchange-telegram-bot:1.1.0
-docker run --env-file .env -d koodies/ftx-exchange-telegram-bot:1.1.0
+docker pull koodies/ftx-exchange-telegram-bot:1.2.0
+docker run --env-file .env -d koodies/ftx-exchange-telegram-bot:1.2.0
 ```
 Additional help: [Set up docker on windows](https://docs.docker.com/desktop/windows/install/)
 
