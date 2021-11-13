@@ -16,7 +16,7 @@ const lendingHelp = `List of available commands:
 lendingScene.enter(ctx => ctx.reply(`Welcome to lending\n ${lendingHelp}`))
 lendingScene.help(ctx => ctx.reply(lendingHelp))
 lendingScene.command('list', ctx => {
-    const msg = displayCoinList()
+    const msg = fileCtrl.displayCoinList()
     ctx.reply(msg)
 })
 lendingScene.command('top10', async ctx => {
