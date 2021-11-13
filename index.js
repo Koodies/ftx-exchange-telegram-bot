@@ -17,6 +17,7 @@ const balanceCtrl = require('./src/controller/balance')
 const logCtrl = require('./src/controller/logs')
 const dbCtrl = require('./src/controller/db')
 const fileCtrl = require('./src/controller/file')
+const init = require('./src/controller/init')
 
 updateDatabase()
 
@@ -42,6 +43,7 @@ bot.command('update', async ctx => {
     await updateDatabase()
     ctx.reply('Updated database')
 })
+bot.command('init', ctx => init(ctx))
 bot.command('watch', ctx => ctx.scene.enter('watchingScene'))
 bot.command('lend', ctx => ctx.scene.enter('lendingScene'))
 bot.command('stake', ctx => ctx.scene.enter('stakingScene'))
@@ -112,6 +114,7 @@ function getHelp(ctx) {
 /lend - Enter lending scene
 /stake - Enter staking scene
 /update - Update database
+/init - Initialize lending & staking list according to your current wallet balance
 /balance - Check your current FTX account balance
 /whois <coin> - Check the full name of the coin
 /startlend - Start lending auto-compounding
