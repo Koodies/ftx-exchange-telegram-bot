@@ -231,16 +231,11 @@ function displayStakeList() {
 }
 
 async function displayLogs(ctx) {
-    let logs = ``
-    if(jobCtrl.queryLend) {
-        logs = `------------ Lending ------------\n`
-        logs += logCtrl.getLendingLogs()
-    }
-    if(jobCtrl.queryStake) {
-        logs += `------------ Staking ------------\n`
-        logs += logCtrl.getStakingLogs()
-    }
-    ctx.reply(logs)
+    let result = `------------ Lending ------------\n`
+    result += logCtrl.getLendingLogs()
+    result += `------------ Staking ------------\n`
+    result += logCtrl.getStakingLogs()
+    ctx.reply(result)
 }
 
 function getTicker(text) {
