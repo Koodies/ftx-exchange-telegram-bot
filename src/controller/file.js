@@ -5,6 +5,39 @@ const db = require(filePath)
 const _ = require('lodash')
 
 class File {
+    static displayCoinList() {
+        let list = `Last updated: ${new Date(db['coins']['lastUpdated']).toLocaleString()} \n`;
+        db['coins']['lend'].forEach(coin => {
+            list += `[${coin.id}] - ${coin.name} \n`
+        })
+        return list
+    }
+
+    static displayStakeList() {
+        let list = `Last updated: ${new Date(db['coins']['lastUpdated']).toLocaleString()} \n`;
+        db['coins']['stake'].forEach(coin => {
+            list += `${coin} \n`
+        })
+        return list
+    }
+
+    static getWatchList() {
+        return db.watching
+    }
+
+    static getLendList() {
+        return db.lending
+    }
+
+    static getStakeList() {
+        return db.staking
+    }
+
+    static getTickerName(ticker) {
+        const doc = _.find(db.coins["lend"], coin => { return coin.id === ticker })
+        return doc?.name
+    }
+
     /**
      * Add ticker to watchlist key on database.json
      * @param  {String} ticker  Coin Ticker Symbol
