@@ -72,9 +72,8 @@ Additional help: [Setting up nodejs](https://docs.npmjs.com/downloading-and-inst
 
 ## Ready to spin
 1. Start a chat with your bot, link to the chat can be found on bot creation with BotFather
-2. Enter /lend to start populating your lending list
-3. Enter /stake to start populating your staking list
-4. Run /startlend or /startstake to start compounding!
+2. Enter /init to start populating your lending & staking list
+3. Run /startlend or /startstake to start compounding!
 
 # Menu
 [(Back to top)](#table-of-contents)
@@ -88,6 +87,7 @@ All commands under main are global commands
 | /lend | Enter the lending scene. |
 | /stake | Enter the staking scene. |
 | /update | Update the local database of coins |
+| /init | Add coins with balance in current wallet into lending/staking list |
 | /balance | View your current balance in your FTX account. |
 | /whois | Query the full name of the coin. |
 | /startlend | Start the hourly lending cron job |
@@ -139,7 +139,7 @@ All commands under main are global commands
 [Koodies](https://github.com/koodies)
 
 ## Tip me a Cup of Coffee
-Use my referral [FTX Referral](https://ftx.com/#a=koodies4ever)
+Use my referral [FTX Referral](https://ftx.com/#a=koodies4ever)\
 [Tip me via FTX](https://ftx.us/pay/request?subscribe=false&id=1160&memoIsRequired=false&memo=&notes=&allowTip=true&fixedWidth=true)
 
 ## References
