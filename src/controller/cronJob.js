@@ -11,6 +11,14 @@ var lendJob = new Cronjob('0 50 * * * *', lending, null, false, 'America/Los_Ang
 var stakeJob = new Cronjob('0 55 * * * *', staking, null, false, 'America/Los_Angeles')
 
 class CronJob {
+    static isLendRunning() {
+        return lendJob.running
+    }
+
+    static isStakeRunning() {
+        return stakeJob.running
+    }
+
     static async startLending() {
         try {
             if (lendJob.running) return `It's running`
