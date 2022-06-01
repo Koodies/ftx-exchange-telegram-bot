@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "mocha": "mocha",
     "test": "nodemon index.js --ignore database.json"
   },
   "author": "Koodies Tan Ke Wei",
